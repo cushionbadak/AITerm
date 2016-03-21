@@ -143,10 +143,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="game.h" />
+    <ClInclude Include="tic_AI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="center.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="tic_AI.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

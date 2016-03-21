@@ -31,7 +31,8 @@ void game::start()
 {
 	//TODO : complete game start
 	int gameEnd = 0;
-	std::string input1;
+	std::string input1, input2;
+	tic_AI *ai = new tic_AI();
 
 	setBoard("B2", 1);
 
@@ -53,20 +54,24 @@ void game::start()
 		}
 		setBoard(input1, 2);
 		
+		input2 = ai->bestChoice(*b, 1);
+		setBoard(input2, 1);
+		
 	}
+	ai->~tic_AI();
 	std::cout << "End : Press Any Button." << std::endl;
 	std::cin.get();
 }
 
 void game::printBoard()
 {
-	std::cout << "   A   B   C   " << std::endl;
+	std::cout << "    A   B   C   " << std::endl;
 	int iter;
-	for (iter = 3; iter > 0; iter--)
+	for (iter = SIZE; iter > 0; iter--)
 	{
-		std::cout << printhelper(iter) << std::endl;
+		std::cout << " " << printhelper(iter) << std::endl;
 	}
-	std::cout << "   A   B   C   " << std::endl << std::endl;
+	std::cout << "    A   B   C   " << std::endl << std::endl;
 }
 
 std::string game::printhelper(int i)
