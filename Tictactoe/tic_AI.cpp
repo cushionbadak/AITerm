@@ -3,7 +3,7 @@
 
 #define SIZE 3
 #define WINLEN 3
-#define DEPTH 3
+#define DEPTH 10
 
 tic_AI::tic_AI()
 {
@@ -42,9 +42,11 @@ std::string tic_AI::bestChoice(brd b, int color)
 	}
 	blanksize = blanks.size();
 
+
+	std::cout << std::endl << "AI thinks..." << std::endl;
 	//win condition
 	
-	for (iter1 = 0; iter1 < blanksize / 2; iter1 = iter1 + 2)
+	for (iter1 = 0; iter1 < blanksize; iter1 = iter1 + 2)
 	{
 		brd *tempb;
 		tempb = new brd(b);
@@ -59,7 +61,7 @@ std::string tic_AI::bestChoice(brd b, int color)
 		tempb->clear();
 	}
 	//defeat condition
-	for (iter1 = 0; iter1 < blanksize / 2; iter1 = iter1 + 2)
+	for (iter1 = 0; iter1 < blanksize; iter1 = iter1 + 2)
 	{
 		brd *tempb;
 		tempb = new brd(b);
@@ -76,15 +78,17 @@ std::string tic_AI::bestChoice(brd b, int color)
 	//others
 	if (blanksize > 1) {
 		score = 0;
-		for (iter1 = 0; iter1 < blanksize / 2; iter1 = iter1 + 2)
+		for (iter1 = 0; iter1 < blanksize; iter1 = iter1 + 2)
 		{
 			brd *tempb;
 			tempb = new brd(b);
+			temp1 = blanks[iter1]; temp2 = blanks[iter1 + 1];
 			setBrd(tempb, temp1, temp2, color);
-
-			if (score < getMyScore(DEPTH, (blanksize / 2), tempb, color, enemycolor))
+			int tv = getMyScore(DEPTH, (blanksize / 2) - 1, tempb, color, enemycolor);
+			if (score < tv)
 			{
 				r1 = blanks[iter1]; r2 = blanks[iter1 + 1];
+				score = tv;
 			}
 			tempb->clear();
 		}
@@ -202,11 +206,9 @@ int tic_AI::getMyScore(int depth, int blanksize, brd* b, int color, int enemycol
 	if (depth == 0 || blanksize == 0) return 0;
 	int currentscore = 0;
 	int maxEnemy = 0;
-	int tempscore;
+	int tempscore = 0;
 	int iter1, iter2;
 	std::vector<int> blanks;
-
-	//make score
 
 	//find blanks
 	for (iter1 = 0; iter1 < SIZE; iter1++)
@@ -220,17 +222,36 @@ int tic_AI::getMyScore(int depth, int blanksize, brd* b, int color, int enemycol
 			}
 		}
 	}
-	//get maxEnemyScore
-	for (iter1 = 0; iter1 < blanksize - 1; iter1 = iter1 + 2)
+
+	//search_all_start
+	if (win(*b, color)) 
 	{
-		brd *tempb = new brd(*b);
-		setBrd(b, blanks[iter1], blanks[iter1 + 1], enemycolor);
-		tempscore = getMyScore(depth - 1, blanksize - 1, b, enemycolor, color);
-		if (tempscore > maxEnemy)
-		{
-			maxEnemy = tempscore;
-		}
-		tempb->clear();
+		return blanksize;
 	}
+	else if (win(*b, enemycolor))
+	{
+		return -blanksize;
+	}
+	else
+	{
+		for (iter1 = 0; iter1 < blanksize; iter1++)
+		{
+			brd *tempb = new brd(*b);
+			
+			setBrd(tempb, blanks[2 * iter1], blanks[2 * iter1 + 1], enemycolor);
+			currentscore -= factor(blanks[2 * iter1], blanks[2 * iter1 + 1]) * getMyScore(depth - 1, blanksize - 1, tempb, enemycolor, color);
+			tempb->clear();
+		}
+	}
+	//search_all_end
+
 	return (currentscore - maxEnemy);
+}
+
+int tic_AI::factor(int r, int i)
+{
+	//specific on 3_3
+	if (r == 1 && i == 1) return 4;
+	else if ((r == 0 || r == 2) && (i == 0 || i == 2)) return 2;
+	else return 3;
 }

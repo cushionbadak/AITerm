@@ -38,9 +38,13 @@ void game::start()
 
 	while (!gameEnd)
 	{
+		std::cout << std::endl << "===============" << std::endl << std::endl;
+
 		printBoard();
 
 		//white input
+		std::cout << std::endl << "===============" << std::endl << std::endl;
+		std::cout << "White : �� , Black : ��" << std::endl << std::endl;
 		std::cout << "Please input position of white stone: ";
 		std::cin >> input1;
 		if (input1 == "exit") break;
@@ -253,19 +257,25 @@ int game::isGameEnd(void)
 	if (win(1))
 	{
 		//black wins
-		std::cout << std::endl <<"Black Wins!" << std::endl;
+		std::cout << std::endl << "�ܡܡܡܡܡܡܡܡܡܡ�" << std::endl;
+		std::cout << "��    Black Wins!   ��" << std::endl;
+		std::cout << "�ܡܡܡܡܡܡܡܡܡܡ�" << std::endl;
 		gameEnd = 1;
 	}
 	else if (win(2))
 	{
 		//white wins
-		std::cout << std::endl << "White Wins!" << std::endl;
+		std::cout << std::endl << "�ۡۡۡۡۡۡۡۡۡۡ�" << std::endl;
+		std::cout << "��    White Wins!   ��" << std::endl;
+		std::cout << "�ۡۡۡۡۡۡۡۡۡۡ�" << std::endl;
 		gameEnd = 1;
 	}
 	else if (boardfull())
 	{
 		//draw
+		std::cout << std::endl << "�ءءءءءءءءءء�" << std::endl;
 		std::cout << std::endl << "This game ended in a draw" << std::endl;
+		std::cout << "�ءءءءءءءءءء�" << std::endl;
 		gameEnd = 1;
 	}
 	return gameEnd;

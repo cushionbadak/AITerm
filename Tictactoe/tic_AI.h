@@ -21,4 +21,5 @@ public:
 	int win(brd, int);
 	void setBrd(brd*, int, int, int);
 	int getMyScore(int, int, brd*, int, int);
+	int factor(int, int);
 };
