@@ -1,25 +1,84 @@
 #pragma once
 #include "tic_AI.h"
 
+#define SIZE 3
+#define WINLEN 3
+
 tic_AI::tic_AI()
 {
 
 }
 tic_AI::~tic_AI()
 {
-
 }
 
-std::string tic_AI::bestChoice(std::vector<std::vector<int> > b, int color)
+std::string tic_AI::bestChoice(brd b, int color)
 {
 	int r1, r2;
 	int iter1, iter2;
-	r1 = -1; r2 = -1;
+	int blanksize;
+	int temp1, temp2;
+	int enemycolor;
+	//blank[2n - 2] : rowvalue of nth point
+	//blank[2n - 1] : columnvalue of nth point
+	std::vector<int> blanks;
 	
+	r1 = -1; r2 = -1;
+	enemycolor = (color == 1) ? 2 : 1;
+
+	//find blanks
+	for (iter1 = 0; iter1 < SIZE; iter1++)
+	{
+		for (iter2 = 0; iter2 < SIZE; iter2++)
+		{
+			if (b.at(iter1).at(iter2) == 0)
+			{
+				blanks.push_back(iter1);
+				blanks.push_back(iter2);
+			}
+		}
+	}
+	blanksize = blanks.size();
+
+	//win condition
+	
+	for (iter1 = 0; iter1 < blanksize / 2; iter1 = iter1 + 2)
+	{
+		brd *tempb;
+		tempb = new brd(b);
+		temp1 = blanks[iter1]; temp2 = blanks[iter1 + 1];
+
+		//check win condition
+		setBrd(tempb, temp1, temp2, color);
+		if (win(*tempb, color))
+		{
+			return addrToStr(temp1, temp2);
+		}
+		tempb->clear();
+	}
+	//defeat condition
+	for (iter1 = 0; iter1 < blanksize / 2; iter1 = iter1 + 2)
+	{
+		brd *tempb;
+		tempb = new brd(b);
+		temp1 = blanks[iter1]; temp2 = blanks[iter1 + 1];
+
+		//check defeat condition
+		setBrd(tempb, temp1, temp2, enemycolor);
+		if (win(*tempb, enemycolor))
+		{
+			return addrToStr(temp1, temp2);
+		}
+		tempb->clear();
+	}
+	//others
+
 
 	//simpleChoice - default
-	if (r1 == -1 && r2 == -1) return (simpleChoice(b));
-
+	/*
+	if (r1 < 0 || r1 >= SIZE || r2 < 0 || r2 >= SIZE) return (simpleChoice(b));
+	*/
+	if (r1 < 0 || r1 >= SIZE || r2 < 0 || r2 >= SIZE) return (addrToStr(blanks[0], blanks[1]));
 
 	return addrToStr(r1, r2);
 
@@ -38,7 +97,7 @@ std::string tic_AI::addrToStr(int r, int i)
 	return s;
 }
 
-std::string tic_AI::simpleChoice(std::vector<std::vector<int> > b)
+std::string tic_AI::simpleChoice(brd b)
 {
 	int iter1, iter2;
 	int r1, r2;
@@ -53,4 +112,71 @@ std::string tic_AI::simpleChoice(std::vector<std::vector<int> > b)
 			}
 		}
 	}
+	return addrToStr(0, 0);
+}
+
+int tic_AI::win(brd b, int color)
+{
+	//copy of "game.cpp" 's game::win(int color)
+	int iter1, iter2, iter3;
+	int temp;
+	//horizontal search
+	for (iter1 = 0; iter1 < SIZE; iter1++)
+	{
+		for (iter2 = 0; iter2 < SIZE - WINLEN + 1; iter2++)
+		{
+			temp = 1;
+			for (iter3 = 0; iter3 < WINLEN; iter3++)
+			{
+				if (b.at(iter1).at(iter2 + iter3) != color) temp = 0;
+			}
+			if (temp) return 1;
+		}
+	}
+	//vertical search
+	for (iter1 = 0; iter1 < SIZE; iter1++)
+	{
+		for (iter2 = 0; iter2 < SIZE - WINLEN + 1; iter2++)
+		{
+			temp = 1;
+			for (iter3 = 0; iter3 < WINLEN; iter3++)
+			{
+				if (b.at(iter2 + iter3).at(iter1) != color) temp = 0;
+			}
+			if (temp) return 1;
+		}
+	}
+	//slash search
+	for (iter1 = WINLEN - 1; iter1 < SIZE; iter1++)
+	{
+		for (iter2 = WINLEN - 1; iter2 < SIZE; iter2++)
+		{
+			temp = 1;
+			for (iter3 = 0; iter3 < WINLEN; iter3++)
+			{
+				if (b.at(iter1 - iter3).at(iter2 - iter3) != color) temp = 0;
+			}
+			if (temp) return 1;
+		}
+	}
+	//backslash search
+	for (iter1 = WINLEN - 1; iter1 < SIZE; iter1++)
+	{
+		for (iter2 = 0; iter2 < SIZE - WINLEN + 1; iter2++)
+		{
+			temp = 1;
+			for (iter3 = 0; iter3 < WINLEN; iter3++)
+			{
+				if (b.at(iter1 - iter3).at(iter2 + iter3) != color) temp = 0;
+			}
+			if (temp) return 1;
+		}
+	}
+
+	return 0;
+}
+
+void tic_AI::setBrd(brd *b, int r, int i, int color)
+{
+	if (r >= 0 && r < SIZE && i >= 0 && i < SIZE) b->at(r).at(i) = color;
 }

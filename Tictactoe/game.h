@@ -1,5 +1,4 @@
 #pragma once
-#include "tic_AI.h"
 #include <vector>
 #include <iostream>
 #include <string>

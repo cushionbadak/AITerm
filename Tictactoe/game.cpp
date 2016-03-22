@@ -1,5 +1,6 @@
 #pragma once
 #include "game.h"
+#include "tic_AI.h"
 
 game::game()
 {
@@ -29,7 +30,6 @@ void game::test1()
 
 void game::start()
 {
-	//TODO : complete game start
 	int gameEnd = 0;
 	std::string input1, input2;
 	tic_AI *ai = new tic_AI();
@@ -39,11 +39,8 @@ void game::start()
 	while (!gameEnd)
 	{
 		printBoard();
-		
-		//check if game ends.
-		gameEnd = isGameEnd();
-		if (gameEnd) break;
 
+		//white input
 		std::cout << "Please input position of white stone: ";
 		std::cin >> input1;
 		if (input1 == "exit") break;
@@ -54,10 +51,21 @@ void game::start()
 		}
 		setBoard(input1, 2);
 		
+		//check if game ends.
+		gameEnd = isGameEnd();
+		if (gameEnd) break;
+
+		//black input
 		input2 = ai->bestChoice(*b, 1);
 		setBoard(input2, 1);
 		
+		//check if game ends.
+		gameEnd = isGameEnd();
+		if (gameEnd) break;
 	}
+
+	printBoard();
+
 	ai->~tic_AI();
 	std::cout << "End : Press Any Button." << std::endl;
 	std::cin.get();
@@ -65,6 +73,7 @@ void game::start()
 
 void game::printBoard()
 {
+	std::cout << std::endl;
 	std::cout << "    A   B   C   " << std::endl;
 	int iter;
 	for (iter = SIZE; iter > 0; iter--)
@@ -167,8 +176,6 @@ std::string game::getColorString(int i)
 
 int game::win(int color)
 {
-	//TODO
-
 	int iter1, iter2, iter3;
 	int temp;
 	//horizontal search
@@ -246,19 +253,19 @@ int game::isGameEnd(void)
 	if (win(1))
 	{
 		//black wins
-		std::cout << "Black Wins!" << std::endl;
+		std::cout << std::endl <<"Black Wins!" << std::endl;
 		gameEnd = 1;
 	}
 	else if (win(2))
 	{
 		//white wins
-		std::cout << "White Wins!" << std::endl;
+		std::cout << std::endl << "White Wins!" << std::endl;
 		gameEnd = 1;
 	}
 	else if (boardfull())
 	{
 		//draw
-		std::cout << "This game ended in a draw" << std::endl;
+		std::cout << std::endl << "This game ended in a draw" << std::endl;
 		gameEnd = 1;
 	}
 	return gameEnd;
