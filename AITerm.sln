@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ThreeProject", "ThreeProject\ThreeProject.vcxproj", "{84F6D96C-ADB8-4E08-A793-9218B5104E68}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tictactoe", "Tictactoe\Tictactoe.vcxproj", "{96B7CB80-D7B5-41E3-BBC3-E33E7863AF3F}"
 EndProject
 Global
@@ -15,14 +13,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{84F6D96C-ADB8-4E08-A793-9218B5104E68}.Debug|x64.ActiveCfg = Debug|x64
-		{84F6D96C-ADB8-4E08-A793-9218B5104E68}.Debug|x64.Build.0 = Debug|x64
-		{84F6D96C-ADB8-4E08-A793-9218B5104E68}.Debug|x86.ActiveCfg = Debug|Win32
-		{84F6D96C-ADB8-4E08-A793-9218B5104E68}.Debug|x86.Build.0 = Debug|Win32
-		{84F6D96C-ADB8-4E08-A793-9218B5104E68}.Release|x64.ActiveCfg = Release|x64
-		{84F6D96C-ADB8-4E08-A793-9218B5104E68}.Release|x64.Build.0 = Release|x64
-		{84F6D96C-ADB8-4E08-A793-9218B5104E68}.Release|x86.ActiveCfg = Release|Win32
-		{84F6D96C-ADB8-4E08-A793-9218B5104E68}.Release|x86.Build.0 = Release|Win32
 		{96B7CB80-D7B5-41E3-BBC3-E33E7863AF3F}.Debug|x64.ActiveCfg = Debug|x64
 		{96B7CB80-D7B5-41E3-BBC3-E33E7863AF3F}.Debug|x64.Build.0 = Debug|x64
 		{96B7CB80-D7B5-41E3-BBC3-E33E7863AF3F}.Debug|x86.ActiveCfg = Debug|Win32

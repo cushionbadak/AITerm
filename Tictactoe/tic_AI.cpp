@@ -4,6 +4,7 @@
 #define SIZE 3
 #define WINLEN 3
 #define DEPTH 10
+#define STARTDEPTH 5
 
 tic_AI::tic_AI()
 {
@@ -76,8 +77,28 @@ std::string tic_AI::bestChoice(brd b, int color)
 		tempb->clear();
 	}
 	//others
-	if (blanksize > 1) {
-		score = 0;
+	if (blanksize == SIZE * SIZE * 2)
+	{
+		//start search
+		score = -1000;
+		
+		for (iter1 = 0; iter1 < blanksize / 2 + 1; iter1 = iter1 + 2)
+		{
+			brd *tempb;
+			tempb = new brd(b);
+			temp1 = blanks[iter1]; temp2 = blanks[iter1 + 1];
+			setBrd(tempb, temp1, temp2, color);
+			int tv = getMyScore(STARTDEPTH, (blanksize / 2) - 1, tempb, color, enemycolor);
+			if (score < tv)
+			{
+				r1 = blanks[iter1]; r2 = blanks[iter1 + 1];
+				score = tv;
+			}
+			tempb->clear();
+		}
+	}
+	else if (blanksize > 1) {
+		score = -1000;
 		for (iter1 = 0; iter1 < blanksize; iter1 = iter1 + 2)
 		{
 			brd *tempb;
@@ -222,36 +243,40 @@ int tic_AI::getMyScore(int depth, int blanksize, brd* b, int color, int enemycol
 			}
 		}
 	}
-
-	//search_all_start
+	//search_start
 	if (win(*b, color)) 
 	{
+		//return blanksize*blanksize;
 		return blanksize;
+		//return 1;
 	}
 	else if (win(*b, enemycolor))
 	{
+		//return -(blanksize - 2)*(blanksize - 2);
 		return -blanksize;
+		//return -1;
+	}
+	else if (blanksize == 8)
+	{
+		for (iter1 = 0; iter1 < blanksize / 2 + 1; iter1++)
+		{
+			brd *tempb = new brd(*b);
+			setBrd(tempb, blanks[2 * iter1], blanks[2 * iter1 + 1], enemycolor);
+			currentscore -= getMyScore(depth - 1, blanksize - 1, tempb, enemycolor, color);
+			tempb->clear();
+		}
 	}
 	else
 	{
 		for (iter1 = 0; iter1 < blanksize; iter1++)
 		{
 			brd *tempb = new brd(*b);
-			
 			setBrd(tempb, blanks[2 * iter1], blanks[2 * iter1 + 1], enemycolor);
-			currentscore -= factor(blanks[2 * iter1], blanks[2 * iter1 + 1]) * getMyScore(depth - 1, blanksize - 1, tempb, enemycolor, color);
+			currentscore -= getMyScore(depth - 1, blanksize - 1, tempb, enemycolor, color);
 			tempb->clear();
 		}
 	}
-	//search_all_end
+	//search_end
 
 	return (currentscore - maxEnemy);
-}
-
-int tic_AI::factor(int r, int i)
-{
-	//specific on 3_3
-	if (r == 1 && i == 1) return 4;
-	else if ((r == 0 || r == 2) && (i == 0 || i == 2)) return 2;
-	else return 3;
 }

@@ -34,7 +34,9 @@ void game::start()
 	std::string input1, input2;
 	tic_AI *ai = new tic_AI();
 
-	setBoard("B2", 1);
+	//black input
+	input2 = ai->bestChoice(*b, 1);
+	setBoard(input2, 1);
 
 	while (!gameEnd)
 	{
