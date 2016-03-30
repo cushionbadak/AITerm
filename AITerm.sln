@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tictactoe", "Tictactoe\Tictactoe.vcxproj", "{96B7CB80-D7B5-41E3-BBC3-E33E7863AF3F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "five25", "five25\five25.vcxproj", "{B788D9FE-ACC8-4A95-A1F9-FF25D28CF780}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{96B7CB80-D7B5-41E3-BBC3-E33E7863AF3F}.Release|x64.Build.0 = Release|x64
 		{96B7CB80-D7B5-41E3-BBC3-E33E7863AF3F}.Release|x86.ActiveCfg = Release|Win32
 		{96B7CB80-D7B5-41E3-BBC3-E33E7863AF3F}.Release|x86.Build.0 = Release|Win32
+		{B788D9FE-ACC8-4A95-A1F9-FF25D28CF780}.Debug|x64.ActiveCfg = Debug|x64
+		{B788D9FE-ACC8-4A95-A1F9-FF25D28CF780}.Debug|x64.Build.0 = Debug|x64
+		{B788D9FE-ACC8-4A95-A1F9-FF25D28CF780}.Debug|x86.ActiveCfg = Debug|Win32
+		{B788D9FE-ACC8-4A95-A1F9-FF25D28CF780}.Debug|x86.Build.0 = Debug|Win32
+		{B788D9FE-ACC8-4A95-A1F9-FF25D28CF780}.Release|x64.ActiveCfg = Release|x64
+		{B788D9FE-ACC8-4A95-A1F9-FF25D28CF780}.Release|x64.Build.0 = Release|x64
+		{B788D9FE-ACC8-4A95-A1F9-FF25D28CF780}.Release|x86.ActiveCfg = Release|Win32
+		{B788D9FE-ACC8-4A95-A1F9-FF25D28CF780}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
