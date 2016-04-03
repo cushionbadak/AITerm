@@ -116,6 +116,16 @@ int board::isFull()
 	}
 	return 1;
 }
+int board::isEmpty()
+{
+	int iter1;
+	for (iter1 = 0; iter1 < SIZE*SIZE; iter1++)
+	{
+		if (b->at(iter1) != EMPTY) return 0;
+	}
+	return 1;
+}
+
 //void setBoard(int addr, int color)
 void board::setBoard(int addr, int color)
 {
@@ -131,7 +141,6 @@ void board::setBoard(int addr, int color)
 
 void board::printBoard()
 {
-	//TODODODODO
 	std::cout << std::endl << std::endl;
 	//head
 	headtailprint();
@@ -273,4 +282,19 @@ std::string board::addr2Str(int addr)
 	str.append(std::to_string(row));
 	str.append(std::to_string(alphabet));
 	return str;
+}
+
+
+std::tuple<int, int> board::addr2Tu(int addr)
+{
+	int a, b;
+	a = addr / SIZE;
+	b = addr % SIZE;
+	std::tuple<int, int> r = std::make_tuple(a, b);
+	return r;
+}
+
+int board::tu2Addr(std::tuple<int, int> tu)
+{
+	return std::get<0>(tu)*SIZE + std::get<1>(tu);
 }

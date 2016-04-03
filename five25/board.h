@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <vector>
 #include <string>
+#include <tuple>
 
 #define SIZE 5
 #define WINLEN 5
@@ -22,25 +23,27 @@ public:
 
 	//vector<int>, size SIZE * SIZE
 	std::vector<int> *b;
-	//int win (int color)
 	int win(int);
-	//int threethree (int color)
 	int threethree(int);
-	//int openfour(int color) __ TODO
 	int openfour(int);
-	//int fourthree (int color) __ TODO
 	int fourthree(int);
 	
 	
 	int isFull();
+	int isEmpty();
+
 	//void setBoard(int addr, int color)
 	void setBoard(int, int);
-	void printBoard();
 	int str2Addr(std::string);
+	std::string addr2Str(int);
+
+	void printBoard();
 	void headtailprint();
 	void firstprint();
 	void lastprint();
 	void bodyprint();
 	std::string mmm(int, int);
-	std::string addr2Str(int);
+	
+	std::tuple<int, int> addr2Tu(int);
+	int tu2Addr(std::tuple<int, int>);
 };
