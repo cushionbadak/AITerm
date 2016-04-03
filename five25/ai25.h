@@ -8,5 +8,6 @@ private:
 public:
 	ai25();
 	~ai25();
+	int choice(board*, int);
 
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include <string>
 
@@ -39,5 +40,7 @@ public:
 	void headtailprint();
 	void firstprint();
 	void lastprint();
+	void bodyprint();
 	std::string mmm(int, int);
+	std::string addr2Str(int);
 };

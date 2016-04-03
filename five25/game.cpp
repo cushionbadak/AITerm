@@ -87,31 +87,63 @@ void game::winprint(int color)
 	//white wins
 	else if (color == WHITE)
 	{
-		std::cout << "¡Ü¡Ü¡Ü¡Ü" << std::endl << "BLACK WIN!" << std::endl << "¡Ü¡Ü¡Ü¡Ü" << std::endl;
+		std::cout << "¡Ü¡Ü¡Ü¡Ü" << std::endl << "WHITE WIN!" << std::endl << "¡Ü¡Ü¡Ü¡Ü" << std::endl;
 	}
 	//otherwise
 	else
 	{
-		std::cout << std::endl << "SOMEONE WIN!" << std::endl;
+		std::cout << "¡Û¡Û¡Ü¡Ü" << std::endl << "SOMEONE WIN!" << std::endl << "¡Ü¡Ü££££" << std::endl;
 	}
 }
 void game::drawprint()
 {
 	brd->printBoard();
-	std::cout << std::endl << "DRAW!" << std::endl;
+	std::cout << "££££££££" << std::endl << "DRAW!" << std::endl << "££££££££" << std::endl;
 }
-int inputSanityCheck(std::string input)
+int game::inputSanityCheck(std::string input)
 {
 	//output 0 means inappropriate input
 	//check length
-	if (input.length() != 2) return 0;
-	//first letter
-	else if (input[0] - 'A' < 0 || input[0] - 'A' >= SIZE) return 0;
-	//second letter
-	else if (input[1] - '0' < 0 || input[1] - '0' >= SIZE) return 0;
-	//all is well
+	if (SIZE < 10)
+	{
+		if (input.length() != 2) return 0;
+		//first letter
+		else if (input[0] - 'A' < 0 || input[0] - 'A' >= SIZE) return 0;
+		//second letter
+		else if (input[1] - '0' <= 0 || input[1] - '0' > SIZE) return 0;
+		//all is well
+		else
+		{
+			return 1;
+		}
+	}
+	else if (SIZE < 20)
+	{
+		if (input.length() > 3) return 0;
+		else if (input[1] == '1')
+		{
+			//first letter
+			if (input[0] - 'A' < 0 || input[0] - 'A' >= SIZE) return 0;
+			//third letter
+			else if (input[2] && (input[2] - '0' <= 0 || input[2] - '0' + 10 > SIZE)) return 0;
+			//all is well
+			else
+			{
+				return 1;
+			}
+		}
+		else
+		{
+			//first letter
+			if (input[0] - 'A' < 0 || input[0] - 'A' >= SIZE) return 0;
+			//second letter
+			else if (input[1] - '0' <= 0 || input[1] - '0' >= 10) return 0;
+		}
+	}
 	else
 	{
+		//TODO_ SIZE over 19
+		std::cout << "WARNING : game::inputSanityCheck are not completed" << std::endl;
 		return 1;
 	}
 }
