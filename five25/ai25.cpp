@@ -43,10 +43,11 @@ int ai25::achoice(board* brd, int color)
 	std::vector<std::tuple<int, int>> all;
 	int iter1;
 	int wt, bt, rst;
-	int temp1;
+	int temp1, temp2;
 	int othercolor = brd->otherColor(color) - 1;
 	// address queue
 	std::vector<int> addrq;
+	std::vector<int> addrq2;
 	// current 3 white status
 	int c3status;
 	
@@ -109,48 +110,12 @@ int ai25::achoice(board* brd, int color)
 	}
 	//remove 3*3 end
 
-	//for DEBUG
-	bt = getSum_b(brd);
-	wt = getSum_w(brd);
-	std::cout << "DEBUG : before :: bt = " << bt << " , wt = " << wt << std::endl;
-	for (iter1 = 0; iter1 < (int)all.size(); iter1++)
-	{
-		std::cout << " tuple : <" << std::get<0>(all.at(iter1)) << ", " << std::get<1>(all.at(iter1)) << ">" << std::endl;
-	}
-	//for DEBUG END
 
-	//others
+	//others using addrq
 		//use addrq
 	wt = 100; bt = 0; rst = -1;
 	for (iter1 = 0; iter1 < (int)addrq.size(); iter1++)
 	{
-		
-		// choice 1
-		// attack first
-		//setboard
-		brd->setBoard(addrq.at(iter1), color);
-		temp1 = getSum_b(brd);
-		if (temp1 > bt)
-		{
-			bt = temp1;
-			wt = getSum_w(brd);
-			rst = addrq.at(iter1);
-		}
-		else if (temp1 == bt)
-		{
-			temp1 = getSum_w(brd);
-			if (wt > temp1)
-			{
-				wt = temp1;
-				rst = addrq.at(iter1);
-			}
-		}
-		//rewind
-		brd->setBoard(addrq.at(iter1), EMPTY);
-		
-
-		/*
-		//choice 2
 		//defence first
 		//setboard
 		brd->setBoard(addrq.at(iter1), color);
@@ -160,6 +125,8 @@ int ai25::achoice(board* brd, int color)
 			wt = temp1;
 			bt = getSum_b(brd);
 			rst = addrq.at(iter1);
+			addrq2.clear();
+			addrq2.push_back(addrq.at(iter1));
 		}
 		else if (temp1 == wt)
 		{
@@ -168,21 +135,34 @@ int ai25::achoice(board* brd, int color)
 			{
 				bt = temp1;
 				rst = addrq.at(iter1);
+				addrq2.clear();
+				addrq2.push_back(addrq.at(iter1));
+			}
+			else if (temp1 == bt)
+			{
+				addrq2.push_back(addrq.at(iter1));
 			}
 		}
 		//rewind
 		brd->setBoard(addrq.at(iter1), EMPTY);
-		*/
 	}
 
-	//for DEBUG
-	std::cout << "DEBUG : after :: bt = " << bt << " , wt = " << wt << std::endl;
-	for (iter1 = 0; iter1 < (int)all.size(); iter1++)
+	//others using addrq2
+	// address in addrq2 has same wt and bt
+	temp2 = 0;
+	for (iter1 = 0; iter1 < (int)addrq2.size(); iter1++)
 	{
-		std::cout << " tuple : <" << std::get<0>(all.at(iter1)) << ", " << std::get<1>(all.at(iter1)) << ">" << std::endl;
+		//setboard
+		brd->setBoard(addrq2.at(iter1), color);
+		temp1 = getsSum_b(brd);
+		if (temp1 > temp2)
+		{
+			temp2 = temp1;
+			rst = addrq2.at(iter1);
+		}
+		//rewind
+		brd->setBoard(addrq2.at(iter1), EMPTY);
 	}
-	std::cout << "DEBUG : rst = " << rst << std::endl;
-	//DEBUG end
 
 	return rst;
 
@@ -218,6 +198,39 @@ int ai25::getSum_w(board *brd)
 		if (std::get<1>(all.at(iter1)) != 0)
 		{
 			count++;
+		}
+	}
+	return count;
+}
+
+int ai25::getsSum_b(board *brd)
+{
+	int iter1;
+	int count;
+	std::vector<std::tuple<int, int>> all = acheck(brd);
+
+	count = 0;
+	for (iter1 = 0; iter1 < (int)all.size(); iter1++)
+	{
+		if (std::get<0>(all.at(iter1)) != 0)
+		{
+			count += std::get<0>(all.at(iter1));
+		}
+	}
+	return count;
+}
+int ai25::getsSum_w(board *brd)
+{
+	int iter1;
+	int count;
+	std::vector<std::tuple<int, int>> all = acheck(brd);
+
+	count = 0;
+	for (iter1 = 0; iter1 < (int)all.size(); iter1++)
+	{
+		if (std::get<1>(all.at(iter1)) != 0)
+		{
+			count += std::get<1>(all.at(iter1));
 		}
 	}
 	return count;

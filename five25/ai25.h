@@ -34,6 +34,9 @@ public:
 
 	int getSum_b(board*);
 	int getSum_w(board*);
+	int getsSum_b(board*);
+	int getsSum_w(board*);
+
 
 	int get1addr4(int, board*);
 };
