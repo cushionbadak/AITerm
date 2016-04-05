@@ -12,7 +12,8 @@ public:
 	int vsimplechoice(board*, int);
 	int achoice(board*, int);
 
-
+	int avalue3_b(board*);
+	int avalue3_w(board*);
 	std::vector<std::tuple<int, int>> acheck(board*);
 
 	std::vector<std::tuple<int, int>> getHvalue(board*);

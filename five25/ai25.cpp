@@ -43,6 +43,10 @@ int ai25::achoice(board* brd, int color)
 	std::vector<std::tuple<int, int>> all;
 	int iter1;
 	int othercolor = brd->otherColor(color) - 1;
+	// address queue
+	std::vector<int> addrq;
+	// current 3 white status
+	int c3status;
 	
 	// if board is empty
 	if (brd->isEmpty())
@@ -69,6 +73,44 @@ int ai25::achoice(board* brd, int color)
 			return get1addr4(iter1, brd);
 		}
 	}
+
+	// remove 3*3
+	// get addr which is not empty and do not make 3*3
+	//result is addrq
+	c3status = avalue3_b(brd);
+	for (iter1 = 0; iter1 < SIZE*SIZE; iter1++)
+	{
+		if (brd->b->at(iter1) != EMPTY)
+		{
+			//not empty addr, avoid these
+			continue;
+		}
+		else
+		{
+			//change brd
+			brd->setBoard(iter1, BLACK);
+			if (avalue3_b(brd) == c3status + 2)
+			{
+				//3*3 addr, avoid these
+				//rewind and continue
+				brd->setBoard(iter1, EMPTY);
+				continue;
+			}
+			else
+			{
+				//add it to addrq
+				addrq.push_back(iter1);
+				//rewind
+				brd->setBoard(iter1, EMPTY);
+			}
+		}
+	}
+	//remove 3*3 end
+
+	//others
+	
+
+
 	//default value
 	return -1;
 }
@@ -166,7 +208,38 @@ int ai25::get1addr4(int addr, board *brd)
 	return -1;
 }
 
-std::vector<std::tuple<int, int>> ai25::getHvalue(board*brd)
+int ai25::avalue3_b(board *brd)
+{
+	//count black 3
+	int iter1, count;
+	count = 0;
+	std::vector<std::tuple<int, int>> all = acheck(brd);
+	for (iter1 = 0; iter1 < (int)all.size(); iter1++)
+	{
+		if (std::get<0>(all.at(iter1)) == 3)
+		{
+			count++;
+		}
+	}
+	return count;
+}
+int ai25::avalue3_w(board *brd)
+{
+	//count black 3
+	int iter1, count;
+	count = 0;
+	std::vector<std::tuple<int, int>> all = acheck(brd);
+	for (iter1 = 0; iter1 < (int)all.size(); iter1++)
+	{
+		if (std::get<1>(all.at(iter1)) == 3)
+		{
+			count++;
+		}
+	}
+	return count;
+}
+
+std::vector<std::tuple<int, int>> ai25::getHvalue(board* brd)
 {
 	std::vector<std::tuple<int, int>> a;
 	int iter1, iter2;

@@ -15,6 +15,8 @@ game::~game()
 void game::start()
 {
 	std::string input1;
+	//for checking 3*3
+	int temp3;
 
 	std::cout << std::endl << "Start renju" << std::endl << std::endl;
 	brd->setBoard(AI->choice(brd, BLACK), BLACK);
@@ -36,6 +38,7 @@ void game::start()
 		//white turn
 			//board print
 		brd->printBoard();
+		temp3 = AI->avalue3_w(brd);
 		while (1) {
 			//require input
 			std::cout << std::endl << "White turn, Reqruie Your Input : ";
@@ -43,6 +46,17 @@ void game::start()
 			//input sanity check
 			if (inputSanityCheck(input1))
 			{
+				//set temporarily
+				brd->setBoard(brd->str2Addr(input1), WHITE);
+				if (AI->avalue3_w(brd) == temp3 + 2)
+				{
+					//rewind
+					brd->setBoard(brd->str2Addr(input1), EMPTY);
+					std::cout << "It's inappropriate input. It makes 3*3" << std::endl;
+					continue;
+				}
+				//rewind
+				brd->setBoard(brd->str2Addr(input1), EMPTY);
 				break;
 			}
 			else
