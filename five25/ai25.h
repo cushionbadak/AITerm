@@ -32,5 +32,8 @@ public:
 	int getnummax_b(std::vector<std::tuple<int, int, int>>, int);
 	int getnummax_w(std::vector<std::tuple<int, int, int>>, int);
 
+	int getSum_b(board*);
+	int getSum_w(board*);
+
 	int get1addr4(int, board*);
 };
