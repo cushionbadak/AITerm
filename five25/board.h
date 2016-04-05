@@ -46,4 +46,6 @@ public:
 	
 	std::tuple<int, int> addr2Tu(int);
 	int tu2Addr(std::tuple<int, int>);
+
+	int otherColor(int);
 };

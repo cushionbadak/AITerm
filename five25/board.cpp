@@ -298,3 +298,19 @@ int board::tu2Addr(std::tuple<int, int> tu)
 {
 	return std::get<0>(tu)*SIZE + std::get<1>(tu);
 }
+
+int board::otherColor(int color)
+{
+	if (color == BLACK)
+	{
+		return WHITE;
+	}
+	else if (color == WHITE)
+	{
+		return BLACK;
+	}
+	else
+	{
+		return -1;
+	}
+}
