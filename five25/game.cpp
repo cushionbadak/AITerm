@@ -86,6 +86,8 @@ void game::start()
 		brd->setBoard(AI->choice(brd, BLACK), BLACK);
 	}
 
+	std::cin.get();
+
 }
 
 void game::winprint(int color)

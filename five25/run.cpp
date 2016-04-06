@@ -6,5 +6,7 @@ int main(void)
 	five25->start();
 	five25->~game();
 
+	std::cin.get();
+
 	return 0;
 }

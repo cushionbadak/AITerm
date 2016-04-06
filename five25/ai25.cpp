@@ -17,7 +17,6 @@ int ai25::choice(board* brd, int color)
 		return a;
 	}
 
-
 	//very simple choice - select first empty space
 	return vsimplechoice(brd, color);
 }
