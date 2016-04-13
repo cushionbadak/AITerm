@@ -1,4 +1,5 @@
 #include "game.h"
+#include "ai25.h"
 
 game::game()
 {
