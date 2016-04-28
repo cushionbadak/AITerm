@@ -8,6 +8,7 @@ game::game()
 	cur_l = new lines();
 	bef_b = new board();
 	cur_b = new board();
+	aiai = new ai();
 }
 
 game::~game()
@@ -16,6 +17,7 @@ game::~game()
 	cur_l->~lines();
 	bef_b->~board();
 	cur_b->~board();
+	aiai->~ai();
 }
 
 int game::game_start(void)

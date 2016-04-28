@@ -1,5 +1,4 @@
 #include "lines.h"
-#include "board.h"
 
 lines::lines()
 {

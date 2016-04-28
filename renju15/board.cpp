@@ -64,6 +64,14 @@ int board::set_board_safe(int addr, int color)
 	}
 }
 
+int board::get_board_safe(int addr)
+{
+	//if addr is out of range, return -1
+	// else, return EMPTY, BLACK, or WHITE
+	if (addr < 0 || addr >= brd->size()) return -1;
+	else return brd->at(addr);
+}
+
 int board::is_board_full()
 {
 	//if board full, return 1

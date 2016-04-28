@@ -25,6 +25,7 @@ public:
 
 	int set_board(int addr, int color);
 	int set_board_safe(int addr, int color);
+	int get_board_safe(int addr);
 
 	int is_board_full();
 
