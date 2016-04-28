@@ -5,7 +5,7 @@
 #include <string>
 #include <tuple>
 
-#define SIZE 5
+#define SIZE 15
 #define WINLEN 5
 
 #define EMPTY 0
@@ -31,6 +31,7 @@ public:
 
 	int isFull();
 	int isEmpty();
+	int isPointEmpty(int);
 
 	//void setBoard(int addr, int color)
 	void setBoard(int, int);

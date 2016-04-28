@@ -47,6 +47,13 @@ void game::start()
 			//input sanity check
 			if (inputSanityCheck(input1))
 			{
+				//if brd is already filled at that point
+				if (!brd->isPointEmpty(brd->str2Addr(input1)))
+				{
+					std::cout << "It's inappropriate input" << std::endl;
+					continue;
+				}
+
 				//set temporarily
 				brd->setBoard(brd->str2Addr(input1), WHITE);
 				if (AI->avalue3_w(brd) == temp3 + 2)

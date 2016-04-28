@@ -9,7 +9,9 @@ public:
 	ai15();
 	~ai15();
 
-	int choice(board*, int);
+	int avalue3_w(board*);
 
+	int choice(board*, int);
+	int vsimplechoice(board*, int);
 
 };

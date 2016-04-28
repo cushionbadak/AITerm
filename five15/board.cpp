@@ -314,3 +314,8 @@ int board::otherColor(int color)
 		return -1;
 	}
 }
+
+int board::isPointEmpty(int addr)
+{
+	return (!b->at(addr));
+}
