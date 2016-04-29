@@ -17,12 +17,13 @@ public:
 	std::vector<int> *sshlines;	//slash lines
 	std::vector<int> *bshlines;	//backslash lines
 
+	int start_base(int n, int ss);
 	int hor_start(int n);
 	int ver_start(int n);
 	int ssh_start(int n);
 	int bsh_start(int n);
 
-	int setline_base(int n, bb *b, int iter_v);
+	int setline_base(int n, bb *b, int iter_v, int ss);
 	int hor_setline(int n, bb *b);
 	int ver_setline(int n, bb *b);
 	int ssh_setline(int n, bb *b);

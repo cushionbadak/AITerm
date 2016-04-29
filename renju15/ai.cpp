@@ -53,11 +53,22 @@ int ai::is_d3_new_method(board *brda, int addr, int color)
 	return 0;
 }
 
+int ai::is_d3_wrap(board *brda, int addr, int color)
+{
+	return is_d3_future(brda, addr, color);
+}
+
+int ai::pick(board *bbb)
+{
+	//wrapper
+	return simple_pick(bbb->brd);
+}
+
 int ai::simple_pick(bb *b)
 {
 	// return first empty address
 	// if board is full, return -1;
 	int i;
-	for (i = 0; i < b->size(); i++) if (b->at(i) == EMPTY) return i;
+	for (i = 0; i < (int)(b->size()); i++) if (b->at(i) == EMPTY) return i;
 	return -1;
 }

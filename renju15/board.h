@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include <iostream>
+#include <string>
 
 // mandatory : BLACK and WHITE must not be 0
 #define BRDSIZE 15
@@ -22,6 +24,8 @@ public:
 
 	int color_sanity(int color);
 	int addr_sanity(int addr);
+	int str2addr(std::string str);
+	int reverse_color(int color);
 
 	int set_board(int addr, int color);
 	int set_board_safe(int addr, int color);
@@ -29,4 +33,10 @@ public:
 
 	int is_board_full();
 
+	int board_print();
+	int board_print_base(int n, std::string firststr, std::string bodystr, std::string laststr);
+	int board_print_up();
+	int board_print_down();
+	int board_print_body(int n);
+	std::string bw_string(int color);
 };
