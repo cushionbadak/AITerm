@@ -23,15 +23,17 @@ int ai::is_d3_future(board *brda, int addr, int color)
 	// if double-3 appears, return 1
 	// else return 0
 	int result = 0;
-	board tempb = *brda;
+	int status = 0;
 	lines *before = new lines();
 	lines *after = new lines();
 	
-	before->full_update(tempb.brd);
-	tempb.set_board_safe(addr, color);
-	after->full_update(tempb.brd);
+	before->full_update(brda->brd);
+	status = brda->set_board_safe(addr, color);
+	if (status != 0) return 0;
+	after->full_update(brda->brd);
 	result = is_d3_lines(before, after, color);
 
+	brda->set_board(addr, EMPTY);
 	before->~lines();
 	after->~lines();
 	return result;

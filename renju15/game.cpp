@@ -11,7 +11,7 @@ game::game()
 	aiai = new ai();
 
 	black_play = 0;
-	white_play = 0;
+	white_play = 1;
 }
 
 game::~game()
@@ -44,6 +44,7 @@ int game::game_start(void)
 		else if (cur_b->is_board_full()) { break; }
 		else { color = cur_b->reverse_color(color); }
 	}
+	cur_b->board_print();
 
 	return 0;
 }
@@ -58,16 +59,15 @@ int game::turn(int color)
 	std::string user_input;
 	int input_addr;
 	do {
-		status = 0;
 		turn_start(color, status);
 		if (color_and_play(color))
 		{
 			// player plays
 			std::cin >> user_input;
 			input_addr = cur_b->str2addr(user_input);
-			if (input_addr != -1) { status = 1; continue; }
-			else if (aiai->is_d3_wrap(cur_b, input_addr, color)) { status = 2; continue; }
-			else if (cur_b->set_board_safe(input_addr, color) < 0) { status = 1; continue; }
+			if (input_addr == -1) { status = 1; }
+			else if (aiai->is_d3_wrap(cur_b, input_addr, color)) { status = 2; }
+			else if (cur_b->set_board_safe(input_addr, color) != 0) { std::cout << cur_b->set_board_safe(input_addr, color); status = 1; }
 			else
 			{
 				status = 0;
@@ -105,15 +105,15 @@ int game::turn_start(int color, int status)
 		else { std::cout << " WHITE TURN !" << std::endl << " WHITE INPUT : "; }
 		break;
 	case 1:
-		if (color == BLACK) { std::cout << " Inappropriate Input, Write Again !" << std::endl << " BLACK INPUT : "; }
-		else { std::cout << " Inappropriate Input Write Again !" << std::endl << " WHITE INPUT : "; }
+		if (color == BLACK) { std::cout << " Inappropriate Input. Write again !" << std::endl << " BLACK INPUT : "; }
+		else { std::cout << " Inappropriate Input. Write again !" << std::endl << " WHITE INPUT : "; }
 		break;
 	case 2:
 		if (color == BLACK) { std::cout << " It's DOUBLE THREE, Write Again !" << std::endl << " BLACK INPUT : "; }
 		else { std::cout << " It's DOUBLE THREE, Write Again !" << std::endl << " WHITE INPUT : "; }
 		break;
 	default:
-		std::cout << "DEBUG : game - turn_start - inappropriate status" << std::endl;
+		std::cout << "WARNING : game - turn_start - inappropriate status" << std::endl;
 		return -1;
 	}
 	return 0;

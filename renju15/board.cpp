@@ -2,6 +2,7 @@
 
 board::board()
 {
+	int i;
 	brd = new bb(BRDSIZE*BRDSIZE);
 }
 
@@ -21,7 +22,7 @@ int board::addr_sanity(int addr)
 {
 	// if addr is in brd's size, return 1.
 	// Otherwise, return 0
-	if (addr >= 0 && addr < (int)(brd->size()))
+	if (addr >= 0 && addr < (BRDSIZE * BRDSIZE))
 	{
 		return 1;
 	}
@@ -91,7 +92,6 @@ int board::set_board_safe(int addr, int color)
 	// if color_sanity fails, return -1.
 	// if board not changed, return 1.
 	// if board changed, return 0
-
 	if (!addr_sanity(addr))	return -2;
 	else if (!color_sanity(color)) return -1;
 	else if (brd->at(addr) != EMPTY) return 1;
@@ -106,7 +106,7 @@ int board::get_board_safe(int addr)
 {
 	//if addr is out of range, return -1
 	// else, return EMPTY, BLACK, or WHITE
-	if (addr < 0 || addr >= (int)(brd->size())) return -1;
+	if (addr < 0 || addr >= (BRDSIZE * BRDSIZE)) return -1;
 	else return brd->at(addr);
 }
 

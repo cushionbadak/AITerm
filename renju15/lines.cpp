@@ -119,10 +119,10 @@ int lines::count(int color, int size)
 	int sum = 0;
 	int value = csv(color, size);
 	if (value == -10) return -1;
-	for (i = 0; i < (int)(horlines->size()); i++) if (horlines->at(i) == value) sum++;
-	for (i = 0; i < (int)verlines->size(); i++) if (verlines->at(i) == value) sum++;
-	for (i = 0; i < (int)sshlines->size(); i++) if (sshlines->at(i) == value) sum++;
-	for (i = 0; i < (int)bshlines->size(); i++) if (bshlines->at(i) == value) sum++;
+	for (i = 0; i < UNITSIZE * BRDSIZE; i++) if (horlines->at(i) == value) sum++;
+	for (i = 0; i < UNITSIZE * BRDSIZE; i++) if (verlines->at(i) == value) sum++;
+	for (i = 0; i < UNITSIZE * UNITSIZE; i++) if (sshlines->at(i) == value) sum++;
+	for (i = 0; i < UNITSIZE * UNITSIZE; i++) if (bshlines->at(i) == value) sum++;
 
 	return sum;
 }
