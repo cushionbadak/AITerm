@@ -2,7 +2,6 @@
 
 board::board()
 {
-	int i;
 	brd = new bb(BRDSIZE*BRDSIZE);
 }
 
@@ -55,6 +54,30 @@ int board::str2addr(std::string str)
 	{
 		return -1;
 	}
+}
+
+std::string board::addr2string(int addr)
+{
+	// it is not general purpose function. it works well when BRDSIZE == 15
+	char f [3];
+	f[0] = (char)(addr % BRDSIZE + (int)'A');
+	if (addr / BRDSIZE > 8 && addr / BRDSIZE < BRDSIZE)
+	{
+		f[1] = '1';
+		f[2] = (char)(addr / BRDSIZE - 9 + (int)'0');
+
+	}
+	else if(addr / BRDSIZE > -1 && addr / BRDSIZE < 9)
+	{
+		f[1] = (char)(addr / BRDSIZE + (int)'1');
+		f[2] = ' ';
+	}
+	else
+	{
+		f[1] = 'Q';
+		f[2] = 'Q';
+	}
+	return std::string(f, 3);
 }
 
 int board::reverse_color(int color)
@@ -119,6 +142,15 @@ int board::is_board_full()
 	return 1;
 }
 
+int board::is_board_empty()
+{
+	// if board all empty, return 1
+	//else, return 0
+	int i;
+	for (i = 0; i < BRDSIZE * BRDSIZE; i++) if (brd->at(i) != EMPTY) return 0;
+	return 1;
+}
+
 int board::board_print()
 {
 	int i;
@@ -172,4 +204,36 @@ std::string board::bw_string(int color)
 	if (color == BLACK) return "¡Û";
 	else if (color == WHITE) return "¡Ü";
 	else return " ";
+}
+
+std::vector<int> board::empty_addrs()
+{
+	int i;
+	std::vector<int> r;
+	for (i = 0; i < BRDSIZE * BRDSIZE; i++)
+		if (get_board_safe(i) == EMPTY)
+			r.push_back(i);
+	return r;
+}
+
+std::pair<int, int> board::addr2pair(int addr) 
+{
+	//for bad input, it returns (-1, -1)
+	if (!addr_sanity(addr)) return std::pair<int, int>(-1, -1);
+	else return std::pair<int, int>(addr / BRDSIZE, addr % BRDSIZE);
+}
+
+int board::pair2addr(std::pair<int, int> p)
+{
+	//for bad input, it returns -1
+	if (p.first < 0 || p.first >= BRDSIZE) return -1;
+	else if (p.second < 0 || p.second >= BRDSIZE) return -1;
+	else return p.first * BRDSIZE + p.second;
+}
+
+int board::get_board_from_pair(std::pair<int, int> p)
+{
+	//if addr is out of range, return -1
+	// else, return EMPTY, BLACK, or WHITE
+	return get_board_safe(pair2addr(p));
 }

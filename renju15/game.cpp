@@ -67,7 +67,7 @@ int game::turn(int color)
 			input_addr = cur_b->str2addr(user_input);
 			if (input_addr == -1) { status = 1; }
 			else if (aiai->is_d3_wrap(cur_b, input_addr, color)) { status = 2; }
-			else if (cur_b->set_board_safe(input_addr, color) != 0) { std::cout << cur_b->set_board_safe(input_addr, color); status = 1; }
+			else if (cur_b->set_board_safe(input_addr, color) != 0) { status = 1; }
 			else
 			{
 				status = 0;
@@ -82,6 +82,7 @@ int game::turn(int color)
 			input_addr = aiai->pick(cur_b);
 			cur_b->set_board_safe(input_addr, color);
 			cur_l->full_update(cur_b->brd);
+			std::cout << " AI puts : " << cur_b->addr2string(input_addr) << std::endl;
 		}
 	} while (status != 0);
 
