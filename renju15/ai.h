@@ -3,10 +3,12 @@
 #include "lines.h"
 
 #define W_WL 5.0
-#define W_BL 8.0
+#define W_BL 7.0
 #define B_WL 3.0
-#define B_BL 2.7
+#define B_BL 2.0
 // In common sense, W_WL < W_BL and B_WL > B_BL is good
+// -1000000 and 10000000 used instead of infinity value (when five stones in one line),
+// so it is recommended to use float value under 20.
 
 // experiment result (W_WL, W_BL, B_WL, B_BL)
 // (2.0, 3.0, 4.0, 3.0) -> DRAW
@@ -15,6 +17,8 @@
 // (5.0, 7.0, 6.0, 5.0) -> WHITE WIN
 // (5.0, 7.0, 3.0, 2.0) -> DRAW
 // (5.0, 7.0, 3.0, 2.7) -> BLACK WIN
+// (5.0, 8.0, 3.0, 2.7) -> DRAW
+// (5.0, 8.0, 3.0, 3.1) -> WHITE WIN
 
 class ai {
 private:

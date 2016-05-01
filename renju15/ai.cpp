@@ -214,13 +214,13 @@ int ai::black_ai_value_factor(int size)
 	//white line
 	if (size < 0 && size >= (-1) * LINESIZE) 
 	{
-		if (size == (-1) * LINESIZE) return -10000;
+		if (size == (-1) * LINESIZE) return -1000000;
 		else return (int)((-1) * std::pow(B_WL, (-1) * size));
 	}
 	//black line
 	else if (size >= 0 && size <= LINESIZE) 
 	{
-		if (size == LINESIZE) return 100000;
+		if (size == LINESIZE) return 10000000;
 		return (int)(std::pow(B_BL, (double)size)); 
 	}
 	else return 0;
