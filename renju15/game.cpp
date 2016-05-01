@@ -11,7 +11,7 @@ game::game()
 	aiai = new ai();
 
 	black_play = 0;
-	white_play = 1;
+	white_play = 0;
 }
 
 game::~game()
@@ -45,6 +45,13 @@ int game::game_start(void)
 		else { color = cur_b->reverse_color(color); }
 	}
 	cur_b->board_print();
+	switch (status)
+	{
+	case BLACK: std::cout << std::endl << " BLACK WIN ! " << std::endl; break;
+	case WHITE: std::cout << std::endl << " WHITE WIN ! " << std::endl; break;
+	case EMPTY: std::cout << std::endl << " DRAW ! " << std::endl; break;
+	default: std::cout << std::endl << " DEFAULT CASE" << std::endl;
+	}
 
 	return 0;
 }
@@ -79,7 +86,7 @@ int game::turn(int color)
 			// AI plays
 			// believe AI do not make inappropriate play
 			std::cout << " <<AI THINKS>>" << std::endl;
-			input_addr = aiai->pick(cur_b);
+			input_addr = aiai->pick(cur_b, color);
 			cur_b->set_board_safe(input_addr, color);
 			cur_l->full_update(cur_b->brd);
 			std::cout << " AI puts : " << cur_b->addr2string(input_addr) << std::endl;

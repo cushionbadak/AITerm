@@ -2,6 +2,20 @@
 #include "board.h"
 #include "lines.h"
 
+#define W_WL 5.0
+#define W_BL 8.0
+#define B_WL 3.0
+#define B_BL 2.7
+// In common sense, W_WL < W_BL and B_WL > B_BL is good
+
+// experiment result (W_WL, W_BL, B_WL, B_BL)
+// (2.0, 3.0, 4.0, 3.0) -> DRAW
+// (5.0, 7.0, 4.0, 3.0) -> WHITE WIN
+// (5.0, 7.0, 7.0, 5.0) -> WHITE WIN
+// (5.0, 7.0, 6.0, 5.0) -> WHITE WIN
+// (5.0, 7.0, 3.0, 2.0) -> DRAW
+// (5.0, 7.0, 3.0, 2.7) -> BLACK WIN
+
 class ai {
 private:
 
@@ -15,14 +29,15 @@ public:
 	int is_d3_new_method_sub(board *brda, std::pair<int, int> center, int color, int f_change, int s_change);
 	int is_d3_wrap(board *brda, int addr, int color);
 
-	int pick(board *bbb);
+	int pick(board *bbb, int color);
 	int simple_pick(bb *b);
 
-	int black_ai_value_when_applied(board *brda, int addr, int color);
-	int black_ai_board_value(board *brda);
-	int black_ai_lines_value(lines *cur_l);
+	int value_when_applied(board *brda, int addr, int color);
+	int board_value(board *brda, int color);
+	int lines_value(lines *cur_l, int color);
 	int black_ai_value_factor(int size);
+	int white_ai_value_factor(int size);
 
-	int black_ai_shallow_search(board *brda);
+	int ai_shallow_search(board *brda, int color);
 	std::vector<int> available_addrs(board *brda, int color);
 };

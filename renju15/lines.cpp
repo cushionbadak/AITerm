@@ -161,7 +161,7 @@ int lines::white_win()
 {
 	// if white wins, it returns 1;
 	// else, return 0.
-	if (count(WHITE, 5) > 0) return 0;
+	if (count(WHITE, 5) > 0) return 1;
 	else return 0;
 }
 

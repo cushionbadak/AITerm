@@ -148,10 +148,10 @@ int ai::is_d3_wrap(board *brda, int addr, int color)
 	//return is_d3_future(brda, addr, color);
 }
 
-int ai::pick(board *bbb)
+int ai::pick(board *bbb, int color)
 {
 	//wrapper
-	int r = black_ai_shallow_search(bbb);
+	int r = ai_shallow_search(bbb, color);
 	if(r == -1)	return simple_pick(bbb->brd);
 	else return r;
 }
@@ -165,34 +165,42 @@ int ai::simple_pick(bb *b)
 	return -1;
 }
 
-int ai::black_ai_value_when_applied(board *brda, int addr, int color)
+int ai::value_when_applied(board *brda, int addr, int color)
 {
 	brda->set_board_safe(addr, color);
-	int r = black_ai_board_value(brda);
+	int r = board_value(brda, color);
 	brda->set_board(addr, EMPTY);
 	return r;
 }
 
-int ai::black_ai_board_value(board *brda)
+int ai::board_value(board *brda, int color)
 {
 	lines *ll = new lines();
 	ll->full_update(brda->brd);
-	int r = black_ai_lines_value(ll);
+	int r = lines_value(ll, color);
 	ll->~lines();
 	return r;
 }
 
-int ai::black_ai_lines_value(lines *cur_l)
+int ai::lines_value(lines *cur_l, int color)
 {
 	// it returns the value of whole board's score.
-	// remember, 'lines' has positive value for black line and negative value for white line.
 	int i, sum;
 	sum = 0;
-	for (i = 0; i < UNITSIZE * BRDSIZE; i++) sum += black_ai_value_factor(cur_l->horlines->at(i));
-	for (i = 0; i < UNITSIZE * BRDSIZE; i++) sum += black_ai_value_factor(cur_l->verlines->at(i));
-	for (i = 0; i < UNITSIZE * UNITSIZE; i++) sum += black_ai_value_factor(cur_l->sshlines->at(i));
-	for (i = 0; i < UNITSIZE * UNITSIZE; i++) sum += black_ai_value_factor(cur_l->bshlines->at(i));
-
+	if (color == BLACK)
+	{
+		for (i = 0; i < UNITSIZE * BRDSIZE; i++) sum += black_ai_value_factor(cur_l->horlines->at(i));
+		for (i = 0; i < UNITSIZE * BRDSIZE; i++) sum += black_ai_value_factor(cur_l->verlines->at(i));
+		for (i = 0; i < UNITSIZE * UNITSIZE; i++) sum += black_ai_value_factor(cur_l->sshlines->at(i));
+		for (i = 0; i < UNITSIZE * UNITSIZE; i++) sum += black_ai_value_factor(cur_l->bshlines->at(i));
+	}
+	else if (color == WHITE)
+	{
+		for (i = 0; i < UNITSIZE * BRDSIZE; i++) sum += white_ai_value_factor(cur_l->horlines->at(i));
+		for (i = 0; i < UNITSIZE * BRDSIZE; i++) sum += white_ai_value_factor(cur_l->verlines->at(i));
+		for (i = 0; i < UNITSIZE * UNITSIZE; i++) sum += white_ai_value_factor(cur_l->sshlines->at(i));
+		for (i = 0; i < UNITSIZE * UNITSIZE; i++) sum += white_ai_value_factor(cur_l->bshlines->at(i));
+	}
 	return sum;
 }
 
@@ -207,31 +215,53 @@ int ai::black_ai_value_factor(int size)
 	if (size < 0 && size >= (-1) * LINESIZE) 
 	{
 		if (size == (-1) * LINESIZE) return -10000;
-		else return (int)((-1) * std::pow(3.0, (-1) * size));
+		else return (int)((-1) * std::pow(B_WL, (-1) * size));
 	}
 	//black line
 	else if (size >= 0 && size <= LINESIZE) 
 	{
 		if (size == LINESIZE) return 100000;
-		return (int)(std::pow(2.7, (double)size)); 
+		return (int)(std::pow(B_BL, (double)size)); 
 	}
 	else return 0;
 }
 
-int ai::black_ai_shallow_search(board *brda)
+int ai::white_ai_value_factor(int size)
+{
+	// it's weighted value of the line.
+	// if inappropriate input comes, it returns 0
+	// it is biased value for WHITE AI.
+	// it assumes the 'size' parameter has the value between -1 * LINESIZE and LINESIZE
+
+	//white line
+	if (size < 0 && size >= (-1) * LINESIZE)
+	{
+		if (size == (-1) * LINESIZE) return 100000;
+		else return (int)(std::pow(W_WL, (-1) * size));
+	}
+	//black line
+	else if (size > 0 && size <= LINESIZE)
+	{
+		if (size == LINESIZE) return -10000;
+		return (int)((-1) * std::pow(W_BL, (double)size));
+	}
+	else return 0;
+}
+
+int ai::ai_shallow_search(board *brda, int color)
 {
 	// Purpose : Testing time consume of depth 1 search
 	// function : choose best address
 	int i;
-	std::vector<int> addrs = available_addrs(brda, BLACK);
+	std::vector<int> addrs = available_addrs(brda, color);
 	int max, temp, raddr;
 	if (brda->is_board_empty()) return (BRDSIZE / 2) * BRDSIZE + (BRDSIZE / 2);
 	else if ((int)addrs.size() == 0) return -1;
-	max = black_ai_value_when_applied(brda, addrs[0], BLACK);
+	max = value_when_applied(brda, addrs[0], color);
 	raddr = addrs[0];
 	for (i = 1; i < (int)addrs.size(); i++)
 	{
-		temp = black_ai_value_when_applied(brda, addrs[i], BLACK);
+		temp = value_when_applied(brda, addrs[i], color);
 		if (max < temp)
 		{
 			max = temp;
