@@ -75,10 +75,12 @@ int ai::is_d3_new_method_sub(board *brda, std::pair<int, int> center, int color,
 	// check 3 for only two direction from center.
 	// if 3 -> return 1, else, return 0.
 	// center's color must be equal to argument 'color'
-	int i, temp;
-	int t1, t2, t3, t4, t5;
+	
+	int t0, t1, t2, t3, t4, t5, t6, t7, t8;
 	int f = center.first;
 	int s = center.second;
+	/*
+	int i, temp;
 	int count_empty_l = 0;
 	int count_empty_r = 0;
 	int count_color = 0;
@@ -130,12 +132,28 @@ int ai::is_d3_new_method_sub(board *brda, std::pair<int, int> center, int color,
 			}
 		}
 	}
-	t1 = brda->get_board_from_pair(std::pair<int, int>(f + f_change * (-2), s + s_change * (-2)));
-	t2 = brda->get_board_from_pair(std::pair<int, int>(f + f_change * (-1), s + s_change * (-1)));
-	t3 = brda->get_board_from_pair(std::pair<int, int>(f, s));
-	t4 = brda->get_board_from_pair(std::pair<int, int>(f + f_change * (1), s + s_change * (1)));
-	t5 = brda->get_board_from_pair(std::pair<int, int>(f + f_change * (2), s + s_change * (2)));
-	if (t1 == EMPTY && t1 == t5 && t2 == color && t2 == t3 && t3 == t4) return 1;
+	*/
+	t0 = brda->get_board_from_pair(std::pair<int, int>(f + f_change * (-4), s + s_change * (-4)));
+	t1 = brda->get_board_from_pair(std::pair<int, int>(f + f_change * (-3), s + s_change * (-3)));
+	t2 = brda->get_board_from_pair(std::pair<int, int>(f + f_change * (-2), s + s_change * (-2)));
+	t3 = brda->get_board_from_pair(std::pair<int, int>(f + f_change * (-1), s + s_change * (-1)));
+	t4 = brda->get_board_from_pair(std::pair<int, int>(f, s));
+	t5 = brda->get_board_from_pair(std::pair<int, int>(f + f_change * (1), s + s_change * (1)));
+	t6 = brda->get_board_from_pair(std::pair<int, int>(f + f_change * (2), s + s_change * (2)));
+	t7 = brda->get_board_from_pair(std::pair<int, int>(f + f_change * (3), s + s_change * (3)));
+	t8 = brda->get_board_from_pair(std::pair<int, int>(f + f_change * (4), s + s_change * (4)));
+	
+	if (t1 == EMPTY && t1 == t5 && t2 == color && t2 == t3 && t3 == t4 && t0 != color && t6 != color && (t0 == EMPTY || t6 == EMPTY)) return 1;
+	if (t2 == EMPTY && t2 == t6 && t3 == color && t3 == t4 && t4 == t5 && t1 != color && t7 != color && (t1 == EMPTY || t7 == EMPTY)) return 1;
+	if (t3 == EMPTY && t3 == t7 && t4 == color && t4 == t5 && t5 == t6 && t2 != color && t8 != color && (t2 == EMPTY || t8 == EMPTY)) return 1;
+
+	if (t0 == EMPTY && t1 == color && t2 == t1 && t4 == t2 && t3 == EMPTY && t5 == EMPTY ) return 1;
+	if (t2 == EMPTY && t3 == color && t4 == t3 && t6 == t4 && t5 == EMPTY && t7 == EMPTY ) return 1;
+	if (t3 == EMPTY && t4 == color && t5 == t4 && t7 == t5 && t6 == EMPTY && t8 == EMPTY ) return 1;
+
+	if (t0 == EMPTY && t1 == color && t2 == EMPTY && t3 == color && t4 == color && t5 == EMPTY) return 1;
+	if (t1 == EMPTY && t2 == color && t3 == EMPTY && t4 == color && t5 == color && t6 == EMPTY) return 1;
+	if (t3 == EMPTY && t4 == color && t5 == EMPTY && t6 == color && t7 == color && t8 == EMPTY) return 1;
 
 	//std::cout << "DEBUG : return 0" << std::endl;
 	return 0;

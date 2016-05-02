@@ -11,7 +11,7 @@ game::game()
 	aiai = new ai();
 
 	black_play = 0;
-	white_play = 0;
+	white_play = 1;
 }
 
 game::~game()
@@ -90,6 +90,9 @@ int game::turn(int color)
 			cur_b->set_board_safe(input_addr, color);
 			cur_l->full_update(cur_b->brd);
 			std::cout << " AI puts : " << cur_b->addr2string(input_addr) << std::endl;
+
+			//temp
+			//std::cout << " ADDR : " << (input_addr / BRDSIZE) + 1 << " , " << (input_addr % BRDSIZE) + 1  << std::endl;
 		}
 	} while (status != 0);
 
@@ -144,7 +147,7 @@ int main(void)
 
 	// game start
 	g.game_start();
-	a = std::cin.get();
+	std::cin >> a;
 	
 	return 0;
 }
