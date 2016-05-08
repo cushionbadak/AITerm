@@ -6,6 +6,10 @@
 #define W_BL 3.8
 #define B_WL 3.2
 #define B_BL 2.8
+#define AVAIL_OPT 6
+#define SEARCH_DEPTH 1
+#define LARGE_MINUS -100000000
+#define LARGE_PLUS 100000000
 // In common sense, W_WL < W_BL and B_WL > B_BL is good
 // -1000000 and 10000000 used instead of infinity value (when five stones in one line),
 // so it is recommended to use float value under 20.
@@ -48,5 +52,8 @@ public:
 	int white_ai_value_factor(int size);
 
 	int ai_shallow_search(board *brda, int color);
+	int ai_minmax_search(board *brda, int color, int depth);
+	int ai_minmax_value(board *brda, int color, int ori_color, int remain_depth, int standard);
 	std::vector<int> available_addrs(board *brda, int color);
+	int avail_optima(board *brda, int addr);
 }; 

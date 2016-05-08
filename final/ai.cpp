@@ -61,12 +61,27 @@ int ai::is_d3_new_method(board *brda, int addr, int color)
 	// horizontal, vertical, slash, backslash
 	counter += is_d3_new_method_sub(brda, center, color, 1, 0);
 	counter += is_d3_new_method_sub(brda, center, color, 0, 1);
+	if (counter > 1)
+	{
+		brda->set_board(addr, EMPTY);
+		// board returned to original board.
+		return 1;
+	}
 	counter += is_d3_new_method_sub(brda, center, color, 1, 1);
+	if (counter > 1)
+	{
+		brda->set_board(addr, EMPTY);
+		// board returned to original board.
+		return 1;
+	}
 	counter += is_d3_new_method_sub(brda, center, color, 1, -1);
 
-	brda->set_board(addr, EMPTY);
 	// board returned to original board.
-	if (counter > 1) return 1;
+	brda->set_board(addr, EMPTY);
+	if (counter > 1)
+	{
+		return 1;
+	}
 	else return 0;
 }
 
@@ -115,8 +130,11 @@ int ai::is_d3_wrap(board *brda, int addr, int color)
 int ai::pick(board *bbb, int color)
 {
 	//wrapper
-	int r = ai_shallow_search(bbb, color);
-	if (r == -1)	return simple_pick(bbb->brd);
+	int r = ai_minmax_search(bbb, color, SEARCH_DEPTH);
+	if (r == -1)
+	{
+		return simple_pick(bbb->brd);
+	}
 	else return r;
 }
 
@@ -235,13 +253,142 @@ int ai::ai_shallow_search(board *brda, int color)
 	return raddr;
 }
 
+int ai::ai_minmax_search(board *brda, int color, int depth)
+{
+	// it returns address.
+	// color : next stone's color. Same meaning with ai_shallow_search's 'color' argument.
+	// if color is black, it always pick larger one.
+	// if color is white, it always pick smaller one.
+	// if color is EMPTY or inappropriate one, it gives -1.
+	// remain_depth must be over 0.
+	int i, temp, max, r, standard;
+	std::vector<int> addrs;
+	r = -1;
+	max = 0;
+	if (brda->is_board_empty()) return (BRDSIZE / 2) * BRDSIZE + (BRDSIZE / 2);
+	else if (depth <= 0) return -1;
+	else if (color != BLACK && color != WHITE) return -1;
+	else
+	{
+		addrs = available_addrs(brda, color);
+		standard = LARGE_MINUS;
+		if (depth <= 0) return -1;
+		else if ((int)addrs.size() == 0) return -1;
+		else
+		{
+			for (i = 0; i < (int)addrs.size(); i++)
+			{
+				// MAX
+				brda->set_board_safe(addrs[i], color);
+				temp = ai_minmax_value(brda, brda->reverse_color(color), color, depth - 1, standard);
+				if (i == 0 || max < temp)
+				{
+					max = temp;
+					standard = temp;
+					r = addrs[i];
+				}
+				brda->set_board(addrs[i], EMPTY);
+			}
+		}
+	}
+	return r;
+}
+
+int ai::ai_minmax_value(board *brda, int color, int ori_color, int remain_depth, int standard)
+{
+	// it returns board value.
+	// color : next stone's color. it must be BLACK or WHITE
+	// if color == ori_color, it picks MAX value, otherwise, it picks MIN value.
+	int i, temp, r, standard_l;
+	std::vector<int> addrs = available_addrs(brda, color);
+	r = 0;
+	if (remain_depth <= 0)
+	{
+		// leaf node
+		return board_value(brda, ori_color);
+	}
+	else
+	{
+		if (color == ori_color)
+		{
+			// MAX
+			standard_l = LARGE_MINUS;
+			for (i = 0; i < (int)addrs.size(); i++)
+			{
+				brda->set_board_safe(addrs[i], color);
+				temp = ai_minmax_value(brda, brda->reverse_color(color), ori_color, remain_depth - 1, standard_l);
+				if (temp > standard)
+				{
+					brda->set_board(addrs[i], EMPTY);
+					return LARGE_PLUS;
+				}
+				if (i == 0 || r < temp)
+				{
+					standard_l = temp;
+					r = temp;
+				}
+				brda->set_board(addrs[i], EMPTY);
+			}
+			return r;
+		}
+		else
+		{
+			// MIN
+			standard_l = LARGE_PLUS;
+			for (i = 0; i < (int)addrs.size(); i++)
+			{
+				brda->set_board_safe(addrs[i], color);
+				temp = ai_minmax_value(brda, brda->reverse_color(color), ori_color, remain_depth - 1, standard_l);
+				if (temp < standard)
+				{
+					brda->set_board(addrs[i], EMPTY);
+					return LARGE_MINUS;
+				}
+				if (i == 0 || r > temp)
+				{
+					standard_l = temp;
+					r = temp;
+				}
+				brda->set_board(addrs[i], EMPTY);
+			}
+			return r;
+		}
+	}
+	//default value, wish never reach.
+	return 0;
+}
+
 std::vector<int> ai::available_addrs(board *brda, int color)
 {
+	// return empty and non-double-3 addresses.
 	std::vector<int> empty_addrs = brda->empty_addrs();
 	int i;
 	std::vector<int> r;
 	for (i = 0; i < (int)empty_addrs.size(); i++)
-		if (is_d3_wrap(brda, empty_addrs[i], color) == 0)
-			r.push_back(empty_addrs[i]);
+		if (avail_optima(brda, i) == 1)
+			if (is_d3_wrap(brda, empty_addrs[i], color) == 0)
+				r.push_back(empty_addrs[i]);
 	return r;
 }
+
+int ai::avail_optima(board *brda, int addr)
+{
+	// avail_optima's semantic is similar with double-3 check
+	// it reduces search space
+
+	// if any stone near addr (distance 4), return 1
+	// else, return 0
+	std::pair<int, int> center = brda->addr2pair(addr);
+	int counter = 0;
+	int i, j, temp;
+	for (i = -1 * AVAIL_OPT; i < AVAIL_OPT + 1; i++)
+	{
+		for (j = -1 * AVAIL_OPT; j < AVAIL_OPT + 1; j++)
+		{
+			temp = brda->get_board_from_pair(std::pair<int, int>(center.first + i, center.second + j));
+			if (temp == BLACK || temp == WHITE) return 1;
+		}
+	}
+	return 0;
+}
+
