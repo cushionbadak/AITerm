@@ -91,6 +91,7 @@ int ai::is_d3_new_method_sub(board *brda, std::pair<int, int> center, int color,
 	// if 3 -> return 1, else, return 0.
 	// center's color must be equal to argument 'color'
 
+	// t4 is center
 	int t0, t1, t2, t3, t4, t5, t6, t7, t8;
 	int f = center.first;
 	int s = center.second;
@@ -104,6 +105,11 @@ int ai::is_d3_new_method_sub(board *brda, std::pair<int, int> center, int color,
 	t6 = brda->get_board_from_pair(std::pair<int, int>(f + f_change * (2), s + s_change * (2)));
 	t7 = brda->get_board_from_pair(std::pair<int, int>(f + f_change * (3), s + s_change * (3)));
 	t8 = brda->get_board_from_pair(std::pair<int, int>(f + f_change * (4), s + s_change * (4)));
+
+	// most important check -- double 3 in one line
+	if (t8 == EMPTY && t7 == color && t6 == color && t5 == EMPTY && t4 == color && t3 == EMPTY && t2 == color && t1 == color && t0 == EMPTY) return 2;
+	if (t1 == EMPTY && t2 == color && t3 == EMPTY && t4 == color && t5 == color && t6 == EMPTY && t7 == color && t8 == EMPTY) return 2;
+	if (t0 == EMPTY && t1 == color && t2 == EMPTY && t3 == color && t4 == color && t5 == EMPTY && t6 == color && t7 == EMPTY) return 2;
 
 	if (t1 == EMPTY && t1 == t5 && t2 == color && t2 == t3 && t3 == t4 && t0 != color && t6 != color && (t0 == EMPTY || t6 == EMPTY)) return 1;
 	if (t2 == EMPTY && t2 == t6 && t3 == color && t3 == t4 && t4 == t5 && t1 != color && t7 != color && (t1 == EMPTY || t7 == EMPTY)) return 1;
@@ -147,46 +153,46 @@ int ai::simple_pick(bb *b)
 	return -1;
 }
 
-int ai::value_when_applied(board *brda, int addr, int color)
+int ai::value_when_applied(board *brda, int addr, int color, int depthflag)
 {
 	brda->set_board_safe(addr, color);
-	int r = board_value(brda, color);
+	int r = board_value(brda, color, depthflag);
 	brda->set_board(addr, EMPTY);
 	return r;
 }
 
-int ai::board_value(board *brda, int color)
+int ai::board_value(board *brda, int color, int depthflag)
 {
 	lines *ll = new lines();
 	ll->full_update(brda->brd);
-	int r = lines_value(ll, color);
+	int r = lines_value(ll, color, depthflag);
 	ll->~lines();
 	return r;
 }
 
-int ai::lines_value(lines *cur_l, int color)
+int ai::lines_value(lines *cur_l, int color, int depthflag)
 {
 	// it returns the value of whole board's score.
 	int i, sum;
 	sum = 0;
 	if (color == BLACK)
 	{
-		for (i = 0; i < UNITSIZE * BRDSIZE; i++) sum += black_ai_value_factor(cur_l->horlines->at(i));
-		for (i = 0; i < UNITSIZE * BRDSIZE; i++) sum += black_ai_value_factor(cur_l->verlines->at(i));
-		for (i = 0; i < UNITSIZE * UNITSIZE; i++) sum += black_ai_value_factor(cur_l->sshlines->at(i));
-		for (i = 0; i < UNITSIZE * UNITSIZE; i++) sum += black_ai_value_factor(cur_l->bshlines->at(i));
+		for (i = 0; i < UNITSIZE * BRDSIZE; i++) sum += black_ai_value_factor(cur_l->horlines->at(i), depthflag);
+		for (i = 0; i < UNITSIZE * BRDSIZE; i++) sum += black_ai_value_factor(cur_l->verlines->at(i), depthflag);
+		for (i = 0; i < UNITSIZE * UNITSIZE; i++) sum += black_ai_value_factor(cur_l->sshlines->at(i), depthflag);
+		for (i = 0; i < UNITSIZE * UNITSIZE; i++) sum += black_ai_value_factor(cur_l->bshlines->at(i), depthflag);
 	}
 	else if (color == WHITE)
 	{
-		for (i = 0; i < UNITSIZE * BRDSIZE; i++) sum += white_ai_value_factor(cur_l->horlines->at(i));
-		for (i = 0; i < UNITSIZE * BRDSIZE; i++) sum += white_ai_value_factor(cur_l->verlines->at(i));
-		for (i = 0; i < UNITSIZE * UNITSIZE; i++) sum += white_ai_value_factor(cur_l->sshlines->at(i));
-		for (i = 0; i < UNITSIZE * UNITSIZE; i++) sum += white_ai_value_factor(cur_l->bshlines->at(i));
+		for (i = 0; i < UNITSIZE * BRDSIZE; i++) sum += white_ai_value_factor(cur_l->horlines->at(i), depthflag);
+		for (i = 0; i < UNITSIZE * BRDSIZE; i++) sum += white_ai_value_factor(cur_l->verlines->at(i), depthflag);
+		for (i = 0; i < UNITSIZE * UNITSIZE; i++) sum += white_ai_value_factor(cur_l->sshlines->at(i), depthflag);
+		for (i = 0; i < UNITSIZE * UNITSIZE; i++) sum += white_ai_value_factor(cur_l->bshlines->at(i), depthflag);
 	}
 	return sum;
 }
 
-int ai::black_ai_value_factor(int size)
+int ai::black_ai_value_factor(int size, int depthflag)
 {
 	// it's weighted value of the line.
 	// if inappropriate input comes, it returns 0
@@ -196,19 +202,23 @@ int ai::black_ai_value_factor(int size)
 	//white line
 	if (size < 0 && size >= (-1) * LINESIZE)
 	{
-		if (size == (-1) * LINESIZE) return -1000000;
+		if (size == (-1) * LINESIZE) return -100000;
 		else return (int)((-1) * std::pow(B_WL, (-1) * size));
 	}
 	//black line
 	else if (size >= 0 && size <= LINESIZE)
 	{
-		if (size == LINESIZE) return 10000000;
+		if (size == LINESIZE)
+		{
+			if (depthflag) return 10000;
+			else return 1000000;
+		}
 		return (int)(std::pow(B_BL, (double)size));
 	}
 	else return 0;
 }
 
-int ai::white_ai_value_factor(int size)
+int ai::white_ai_value_factor(int size, int depthflag)
 {
 	// it's weighted value of the line.
 	// if inappropriate input comes, it returns 0
@@ -218,13 +228,17 @@ int ai::white_ai_value_factor(int size)
 	//white line
 	if (size < 0 && size >= (-1) * LINESIZE)
 	{
-		if (size == (-1) * LINESIZE) return 100000;
+		if (size == (-1) * LINESIZE)
+		{
+			if (depthflag) return 10000;
+			else return 1000000;
+		}
 		else return (int)(std::pow(W_WL, (-1) * size));
 	}
 	//black line
 	else if (size > 0 && size <= LINESIZE)
 	{
-		if (size == LINESIZE) return -10000;
+		if (size == LINESIZE) return -100000;
 		return (int)((-1) * std::pow(W_BL, (double)size));
 	}
 	else return 0;
@@ -239,11 +253,11 @@ int ai::ai_shallow_search(board *brda, int color)
 	int max, temp, raddr;
 	if (brda->is_board_empty()) return (BRDSIZE / 2) * BRDSIZE + (BRDSIZE / 2);
 	else if ((int)addrs.size() == 0) return -1;
-	max = value_when_applied(brda, addrs[0], color);
+	max = value_when_applied(brda, addrs[0], color, 0);
 	raddr = addrs[0];
 	for (i = 1; i < (int)addrs.size(); i++)
 	{
-		temp = value_when_applied(brda, addrs[i], color);
+		temp = value_when_applied(brda, addrs[i], color, 0);
 		if (max < temp)
 		{
 			max = temp;
@@ -261,7 +275,7 @@ int ai::ai_minmax_search(board *brda, int color, int depth)
 	// if color is white, it always pick smaller one.
 	// if color is EMPTY or inappropriate one, it gives -1.
 	// remain_depth must be over 0.
-	int i, temp, max, r, standard;
+	int i, temp, max, r;
 	std::vector<int> addrs;
 	std::vector<std::pair<int, int>> s_addrs;	// top 5 addrs. vector of (address, board_value)
 	r = -1;
@@ -272,7 +286,6 @@ int ai::ai_minmax_search(board *brda, int color, int depth)
 	else
 	{
 		addrs = available_addrs(brda, color);
-		standard = LARGE_MINUS;
 		if (depth <= 0) return -1;
 		else if ((int)addrs.size() == 0) return -1;
 		else
@@ -280,7 +293,7 @@ int ai::ai_minmax_search(board *brda, int color, int depth)
 			// around MAX
 			for (i = 0; i < (int)addrs.size(); i++)
 			{
-				temp = value_when_applied(brda, addrs[i], color);
+				temp = value_when_applied(brda, addrs[i], color, 0);
 				if ((int)s_addrs.size() < S_ADDRS_SIZE)
 				{
 					s_addrs.push_back(std::pair<int, int>(addrs[i], temp));
@@ -298,11 +311,10 @@ int ai::ai_minmax_search(board *brda, int color, int depth)
 			for (i = 0; i < (int)s_addrs.size(); i++)
 			{
 				brda->set_board_safe(s_addrs[i].first, color);
-				temp = ai_minmax_value(brda, brda->reverse_color(color), color, depth - 1, standard);
+				temp = ai_minmax_value(brda, brda->reverse_color(color), color, depth - 1);
 				if (i == 0 || max < temp)
 				{
 					max = temp;
-					standard = temp;
 					r = s_addrs[i].first;
 				}
 				brda->set_board(s_addrs[i].first, EMPTY);
@@ -312,19 +324,20 @@ int ai::ai_minmax_search(board *brda, int color, int depth)
 	return r;
 }
 
-int ai::ai_minmax_value(board *brda, int color, int ori_color, int remain_depth, int standard)
+int ai::ai_minmax_value(board *brda, int color, int ori_color, int remain_depth)
 {
 	// it returns board value.
 	// color : next stone's color. it must be BLACK or WHITE
 	// if color == ori_color, it picks MAX value, otherwise, it picks MIN value.
-	int i, temp, r, standard_l;
+	int i, temp, r;
 	std::vector<int> addrs = available_addrs(brda, color);
 	std::vector<std::pair<int, int>> s_addrs;
 	r = 0;
 	if (remain_depth <= 0)
 	{
 		// leaf node
-		return board_value(brda, ori_color);
+		if (SEARCH_DEPTH < 2) return board_value(brda, ori_color, 0);
+		else return board_value(brda, ori_color, 1);
 	}
 	else
 	{
@@ -334,7 +347,7 @@ int ai::ai_minmax_value(board *brda, int color, int ori_color, int remain_depth,
 			// around MAX
 			for (i = 0; i < (int)addrs.size(); i++)
 			{
-				temp = value_when_applied(brda, addrs[i], color);
+				temp = value_when_applied(brda, addrs[i], color, 1);
 				if ((int)s_addrs.size() < S_ADDRS_SIZE)
 				{
 					s_addrs.push_back(std::pair<int, int>(addrs[i], temp));
@@ -349,19 +362,12 @@ int ai::ai_minmax_value(board *brda, int color, int ori_color, int remain_depth,
 				}
 			}
 			// MAX
-			standard_l = LARGE_MINUS;
 			for (i = 0; i < (int)s_addrs.size(); i++)
 			{
 				brda->set_board_safe(s_addrs[i].first, color);
-				temp = ai_minmax_value(brda, brda->reverse_color(color), ori_color, remain_depth - 1, standard_l);
-				if (temp > standard)
-				{
-					brda->set_board(s_addrs[i].first, EMPTY);
-					return LARGE_PLUS;
-				}
+				temp = ai_minmax_value(brda, brda->reverse_color(color), ori_color, remain_depth - 1);
 				if (i == 0 || r < temp)
 				{
-					standard_l = temp;
 					r = temp;
 				}
 				brda->set_board(s_addrs[i].first, EMPTY);
@@ -374,7 +380,7 @@ int ai::ai_minmax_value(board *brda, int color, int ori_color, int remain_depth,
 			// around MIN
 			for (i = 0; i < (int)addrs.size(); i++)
 			{
-				temp = value_when_applied(brda, addrs[i], color);
+				temp = value_when_applied(brda, addrs[i], color, 1);
 				if ((int)s_addrs.size() < S_ADDRS_SIZE)
 				{
 					s_addrs.push_back(std::pair<int, int>(addrs[i], temp));
@@ -389,19 +395,12 @@ int ai::ai_minmax_value(board *brda, int color, int ori_color, int remain_depth,
 				}
 			}
 			// MIN
-			standard_l = LARGE_PLUS;
 			for (i = 0; i < (int)s_addrs.size(); i++)
 			{
 				brda->set_board_safe(s_addrs[i].first, color);
-				temp = ai_minmax_value(brda, brda->reverse_color(color), ori_color, remain_depth - 1, standard_l);
-				if (temp < standard)
-				{
-					brda->set_board(s_addrs[i].first, EMPTY);
-					return LARGE_MINUS;
-				}
+				temp = ai_minmax_value(brda, brda->reverse_color(color), ori_color, remain_depth - 1);
 				if (i == 0 || r > temp)
 				{
-					standard_l = temp;
 					r = temp;
 				}
 				brda->set_board(s_addrs[i].first, EMPTY);

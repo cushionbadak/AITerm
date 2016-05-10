@@ -2,15 +2,15 @@
 #include "board.h"
 #include "lines.h"
 
-#define W_WL 2.8
-#define W_BL 3.8
+#define W_WL 2.5
+#define W_BL 3.2
 #define B_WL 3.2
-#define B_BL 2.8
+#define B_BL 2.5
 #define AVAIL_OPT 5
-#define SEARCH_DEPTH 2
+#define SEARCH_DEPTH 3
 #define S_ADDRS_SIZE 5
-#define LARGE_MINUS -100000000
-#define LARGE_PLUS 100000000
+#define LARGE_MINUS -500000000
+#define LARGE_PLUS 500000000
 // In common sense, W_WL < W_BL and B_WL > B_BL is good
 // -1000000 and 10000000 used instead of infinity value (when five stones in one line),
 // so it is recommended to use float value under 20.
@@ -46,15 +46,15 @@ public:
 	int pick(board *bbb, int color);
 	int simple_pick(bb *b);
 
-	int value_when_applied(board *brda, int addr, int color);
-	int board_value(board *brda, int color);
-	int lines_value(lines *cur_l, int color);
-	int black_ai_value_factor(int size);
-	int white_ai_value_factor(int size);
+	int value_when_applied(board *brda, int addr, int color, int depthflag);
+	int board_value(board *brda, int color, int depthflag);
+	int lines_value(lines *cur_l, int color, int depthflag);
+	int black_ai_value_factor(int size, int depthflag);
+	int white_ai_value_factor(int size, int depthflag);
 
 	int ai_shallow_search(board *brda, int color);
 	int ai_minmax_search(board *brda, int color, int depth);
-	int ai_minmax_value(board *brda, int color, int ori_color, int remain_depth, int standard);
+	int ai_minmax_value(board *brda, int color, int ori_color, int remain_depth);
 	std::vector<int> available_addrs(board *brda, int color);
 	int avail_optima(board *brda, int addr);
 
