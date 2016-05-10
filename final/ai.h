@@ -6,8 +6,9 @@
 #define W_BL 3.8
 #define B_WL 3.2
 #define B_BL 2.8
-#define AVAIL_OPT 6
-#define SEARCH_DEPTH 1
+#define AVAIL_OPT 5
+#define SEARCH_DEPTH 2
+#define S_ADDRS_SIZE 5
 #define LARGE_MINUS -100000000
 #define LARGE_PLUS 100000000
 // In common sense, W_WL < W_BL and B_WL > B_BL is good
@@ -56,4 +57,6 @@ public:
 	int ai_minmax_value(board *brda, int color, int ori_color, int remain_depth, int standard);
 	std::vector<int> available_addrs(board *brda, int color);
 	int avail_optima(board *brda, int addr);
+
+	int v_pair_sort(std::vector<std::pair<int, int>> *s_addrs);
 }; 

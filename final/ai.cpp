@@ -263,6 +263,7 @@ int ai::ai_minmax_search(board *brda, int color, int depth)
 	// remain_depth must be over 0.
 	int i, temp, max, r, standard;
 	std::vector<int> addrs;
+	std::vector<std::pair<int, int>> s_addrs;	// top 5 addrs. vector of (address, board_value)
 	r = -1;
 	max = 0;
 	if (brda->is_board_empty()) return (BRDSIZE / 2) * BRDSIZE + (BRDSIZE / 2);
@@ -276,18 +277,35 @@ int ai::ai_minmax_search(board *brda, int color, int depth)
 		else if ((int)addrs.size() == 0) return -1;
 		else
 		{
+			// around MAX
 			for (i = 0; i < (int)addrs.size(); i++)
 			{
-				// MAX
-				brda->set_board_safe(addrs[i], color);
+				temp = value_when_applied(brda, addrs[i], color);
+				if ((int)s_addrs.size() < S_ADDRS_SIZE)
+				{
+					s_addrs.push_back(std::pair<int, int>(addrs[i], temp));
+				}
+				else
+				{
+					v_pair_sort(&s_addrs);
+					if (s_addrs[S_ADDRS_SIZE - 1].second < temp)
+					{
+						s_addrs[S_ADDRS_SIZE - 1] = std::pair<int, int>(addrs[i], temp);
+					}
+				}
+			}
+			// MAX
+			for (i = 0; i < (int)s_addrs.size(); i++)
+			{
+				brda->set_board_safe(s_addrs[i].first, color);
 				temp = ai_minmax_value(brda, brda->reverse_color(color), color, depth - 1, standard);
 				if (i == 0 || max < temp)
 				{
 					max = temp;
 					standard = temp;
-					r = addrs[i];
+					r = s_addrs[i].first;
 				}
-				brda->set_board(addrs[i], EMPTY);
+				brda->set_board(s_addrs[i].first, EMPTY);
 			}
 		}
 	}
@@ -301,6 +319,7 @@ int ai::ai_minmax_value(board *brda, int color, int ori_color, int remain_depth,
 	// if color == ori_color, it picks MAX value, otherwise, it picks MIN value.
 	int i, temp, r, standard_l;
 	std::vector<int> addrs = available_addrs(brda, color);
+	std::vector<std::pair<int, int>> s_addrs;
 	r = 0;
 	if (remain_depth <= 0)
 	{
@@ -311,15 +330,33 @@ int ai::ai_minmax_value(board *brda, int color, int ori_color, int remain_depth,
 	{
 		if (color == ori_color)
 		{
-			// MAX
-			standard_l = LARGE_MINUS;
+			// MAX part
+			// around MAX
 			for (i = 0; i < (int)addrs.size(); i++)
 			{
-				brda->set_board_safe(addrs[i], color);
+				temp = value_when_applied(brda, addrs[i], color);
+				if ((int)s_addrs.size() < S_ADDRS_SIZE)
+				{
+					s_addrs.push_back(std::pair<int, int>(addrs[i], temp));
+				}
+				else
+				{
+					v_pair_sort(&s_addrs);
+					if (s_addrs[S_ADDRS_SIZE - 1].second < temp)
+					{
+						s_addrs[S_ADDRS_SIZE - 1] = std::pair<int, int>(addrs[i], temp);
+					}
+				}
+			}
+			// MAX
+			standard_l = LARGE_MINUS;
+			for (i = 0; i < (int)s_addrs.size(); i++)
+			{
+				brda->set_board_safe(s_addrs[i].first, color);
 				temp = ai_minmax_value(brda, brda->reverse_color(color), ori_color, remain_depth - 1, standard_l);
 				if (temp > standard)
 				{
-					brda->set_board(addrs[i], EMPTY);
+					brda->set_board(s_addrs[i].first, EMPTY);
 					return LARGE_PLUS;
 				}
 				if (i == 0 || r < temp)
@@ -327,21 +364,39 @@ int ai::ai_minmax_value(board *brda, int color, int ori_color, int remain_depth,
 					standard_l = temp;
 					r = temp;
 				}
-				brda->set_board(addrs[i], EMPTY);
+				brda->set_board(s_addrs[i].first, EMPTY);
 			}
 			return r;
 		}
 		else
 		{
-			// MIN
-			standard_l = LARGE_PLUS;
+			// MIN part
+			// around MIN
 			for (i = 0; i < (int)addrs.size(); i++)
 			{
-				brda->set_board_safe(addrs[i], color);
+				temp = value_when_applied(brda, addrs[i], color);
+				if ((int)s_addrs.size() < S_ADDRS_SIZE)
+				{
+					s_addrs.push_back(std::pair<int, int>(addrs[i], temp));
+				}
+				else
+				{
+					v_pair_sort(&s_addrs);
+					if (s_addrs[0].second > temp)
+					{
+						s_addrs[0] = std::pair<int, int>(addrs[i], temp);
+					}
+				}
+			}
+			// MIN
+			standard_l = LARGE_PLUS;
+			for (i = 0; i < (int)s_addrs.size(); i++)
+			{
+				brda->set_board_safe(s_addrs[i].first, color);
 				temp = ai_minmax_value(brda, brda->reverse_color(color), ori_color, remain_depth - 1, standard_l);
 				if (temp < standard)
 				{
-					brda->set_board(addrs[i], EMPTY);
+					brda->set_board(s_addrs[i].first, EMPTY);
 					return LARGE_MINUS;
 				}
 				if (i == 0 || r > temp)
@@ -349,7 +404,7 @@ int ai::ai_minmax_value(board *brda, int color, int ori_color, int remain_depth,
 					standard_l = temp;
 					r = temp;
 				}
-				brda->set_board(addrs[i], EMPTY);
+				brda->set_board(s_addrs[i].first, EMPTY);
 			}
 			return r;
 		}
@@ -392,3 +447,26 @@ int ai::avail_optima(board *brda, int addr)
 	return 0;
 }
 
+int ai::v_pair_sort(std::vector<std::pair<int, int>> *s_addrs)
+{
+	// selection sort
+	// only for S_ADDRS_SIZE
+	// bigger one at front
+	int i, j, max;
+	std::pair<int, int> temp;
+	for (i = 0; i < S_ADDRS_SIZE - 1; i++)
+	{
+		max = i;
+		for (j = i + 1; j < S_ADDRS_SIZE; j++)
+		{
+			if (s_addrs->at(max).second < s_addrs->at(j).second)
+			{
+				max = j;
+			}
+		}
+		temp = s_addrs->at(max);
+		s_addrs->at(max) = s_addrs->at(i);
+		s_addrs->at(i) = temp;
+	}
+	return 0;
+}
