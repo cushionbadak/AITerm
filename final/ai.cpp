@@ -337,7 +337,7 @@ int ai::ai_minmax_value(board *brda, int color, int ori_color, int remain_depth)
 	{
 		// leaf node
 		if (SEARCH_DEPTH < 2) return board_value(brda, ori_color, 0);
-		else return board_value(brda, ori_color, 1);
+		else return board_value(brda, ori_color, 0);
 	}
 	else
 	{
