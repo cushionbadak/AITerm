@@ -100,6 +100,7 @@ int game::turn(int color, std::string input_string, int flag)
 		input_addr = aiai->pick(cur_b, color);
 		cur_b->set_board_safe(input_addr, color);
 		cur_l->full_update(cur_b->brd);
+		
 		std::cout << cur_b->addr2string(input_addr) << std::endl;
 	}
 	return 0;

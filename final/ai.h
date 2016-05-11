@@ -3,7 +3,7 @@
 #include "lines.h"
 
 #define W_WL 2.8
-#define W_BL 3.8
+#define W_BL 4.0
 #define B_WL 3.8
 #define B_BL 2.8
 #define AVAIL_OPT 5
