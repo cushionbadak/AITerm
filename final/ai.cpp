@@ -202,7 +202,7 @@ int ai::black_ai_value_factor(int size, int depthflag)
 	//white line
 	if (size < 0 && size >= (-1) * LINESIZE)
 	{
-		if (size == (-1) * LINESIZE) return -100000;
+		if (size == (-1) * LINESIZE) return -1000000;
 		else return (int)((-1) * std::pow(B_WL, (-1) * size));
 	}
 	//black line
@@ -210,8 +210,8 @@ int ai::black_ai_value_factor(int size, int depthflag)
 	{
 		if (size == LINESIZE)
 		{
-			if (depthflag) return 10000;
-			else return 1000000;
+			if (depthflag) return 10000000;
+			else return 10000000;
 		}
 		return (int)(std::pow(B_BL, (double)size));
 	}
@@ -230,15 +230,15 @@ int ai::white_ai_value_factor(int size, int depthflag)
 	{
 		if (size == (-1) * LINESIZE)
 		{
-			if (depthflag) return 10000;
-			else return 1000000;
+			if (depthflag) return 10000000;
+			else return 10000000;
 		}
 		else return (int)(std::pow(W_WL, (-1) * size));
 	}
 	//black line
 	else if (size > 0 && size <= LINESIZE)
 	{
-		if (size == LINESIZE) return -100000;
+		if (size == LINESIZE) return -1000000;
 		return (int)((-1) * std::pow(W_BL, (double)size));
 	}
 	else return 0;
