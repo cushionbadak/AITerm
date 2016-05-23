@@ -62,7 +62,8 @@ int game::game_start(void)
 		black_play = 1;
 		white_play = 0;
 	}
-	while (status == EMPTY)
+	//while (status == EMPTY)
+	while (1)
 	{
 		turn(color, input_string, flag);
 		if (cur_l->black_win()) { status = BLACK; continue; }
