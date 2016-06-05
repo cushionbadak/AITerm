@@ -1,5 +1,5 @@
 # AITerm
-KoreaUniv-AI-01-Term_project / simplified renju
+2016-01-KoreaUniv-AI-Term_project / simplified renju
 
 All visual studio solution included. please read the source code only.
 
